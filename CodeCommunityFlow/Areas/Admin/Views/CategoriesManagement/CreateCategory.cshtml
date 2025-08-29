@@ -1,0 +1,29 @@
+﻿@model CodeCommunityFlow.ViewModels.CategoryViewModel
+@{
+    ViewBag.Title = "Add Category";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+<h4 class="mt-4">Add Category </h4>
+
+<div class="col-sm-6">
+
+    @using (Html.BeginForm("CreateCategory", "CategoriesManagement", new { area = "Admin" }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+    <div class="form-group">
+
+        @Html.LabelFor(m => m.CatagoryName)
+        @Html.TextBoxFor(m => m.CatagoryName, new { @class = "form-control", required = "required" })
+        @Html.ValidationMessageFor(m => m.CatagoryName)
+
+        <br />
+        @Html.ValidationSummary()
+        <button type="submit" class="btn btn-primary">Add Category</button>
+        <a class="btn btn-danger" href="@Url.Action("CategoryManagement", "CategoriesManagement", new { area = "Admin" })">Cancel</a>
+    </div>
+    }
+
+
+</div>

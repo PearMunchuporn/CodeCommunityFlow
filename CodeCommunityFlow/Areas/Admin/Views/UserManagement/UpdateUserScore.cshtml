@@ -1,0 +1,35 @@
+﻿@model CodeCommunityFlow.ViewModels.UpdateUserScoreViewModel
+@{
+    ViewBag.Title = "Update User's Score";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+
+
+<h4 class="my-4">Report Reason Table</h4>
+<div>
+    @Html.Partial("ReportPartial", Model.ReportReasonTable)
+</div>
+
+<div>
+    @Html.Partial("ReportLogPartialByUser", Model.ReportLogUser)
+</div>
+
+<h4 class="my-3">Reimburse Score to User Who got tricked report.</h4>
+
+<p style="font-size:20px"><span class="badge badge-reimburseScore">If user got tricked report, Admin will update a new score to the user. </span>❤️</p>
+
+@using (Html.BeginForm("UpdateUserScore", "UserManagement", new { area = "Admin", id = Model.UserID }, FormMethod.Post))
+{@Html.AntiForgeryToken()
+<div class="col-md-4">
+    @Html.TextBoxFor(m => m.Score, new { @class = "form-control", rows = 5, required = "required" })
+</div>
+
+<br />
+<input type="hidden" value="@Model.UserID" name="UserID" />
+<button type="submit" class="btn btn-info">Update User's Score</button>
+<a href="/Admin/UserViewProfile/UserViewProfile/@Model.UserID" class="btn btn-danger">Cancel</a>
+@Html.ValidationSummary()
+}
+<br />
+

@@ -1,0 +1,54 @@
+﻿@model List<CodeCommunityFlow.ViewModels.CategoryViewModel>
+@{
+    ViewBag.Title = "Categories Management";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+@if (TempData["AddCategory"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["AddCategory"]</div>
+}
+
+@if (TempData["EditCategory"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["EditCategory"]</div>
+}
+
+<h4 class="mt-4">Category Management</h4>
+<br />
+<a href="/admin/CategoriesManagement/CreateCategory" class="btn btn-primary">Add Category</a>
+
+
+<table class="table table-responsive mt-4">
+
+    <tr>
+        <th>Category ID</th>
+        <th>Category Name</th>
+        <th>Edit</th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.CategoryID.</td>
+            <td>@item.CatagoryName </td>
+            <td><a href="/admin/CategoriesManagement/EditCategory/@item.CategoryID" class="btn btn-warning">Edit</a></td>
+            @Html.AntiForgeryToken()
+        </tr>
+    }
+
+
+</table>
+
+<script>
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+</script>

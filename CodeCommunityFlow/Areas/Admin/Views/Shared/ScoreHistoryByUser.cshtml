@@ -1,0 +1,216 @@
+﻿@model List<CodeCommunityFlow.ViewModels.ScoreHistoryViewModel>
+
+
+
+<table id="ScoreHistoryTableByUser" class="table table-bordered table-striped my-custom-table">
+    <thead>
+        <tr>
+            <th>Score Log No.</th>
+            <th>User Name</th>
+            <th>Add Answer</th>
+            <th>Update Answer</th>
+            <th>Got Report</th>
+
+            <th>Report Reason</th>
+            <th>Warned By Admin</th>
+            <th>Deleted By Admin</th>
+            <th>Got Vote Up</th>
+            <th>Got Vote Down</th>
+
+            <th>Update User's Score By Admin</th>
+            <th>Got Thank To</th>
+            <th>Score Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var log in Model)
+        {
+
+
+            <tr>
+                <td>@no</td>
+                <td>@(log.UserScore?.UserName ?? "N/A")</td>
+                <td>
+                    @if (@log.AddAnswer != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-plusScore">+@(log.AddAnswer ?? 0)</span></p>
+                    }
+                    else
+                    {
+                        @(log.AddAnswer ?? 0)
+                    }
+                </td>
+
+                <td>
+                    @if (log.UpdateAnswer != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-plusScore">+@(log.UpdateAnswer ?? 0)</span></p>
+
+
+                    }
+                    else
+                    {
+                        @(log.UpdateAnswer?? 0)
+                    }
+
+                </td>
+
+                <td>
+                    @if (log.GotReport != null)
+
+
+                    {
+                        <p style="font-size:20px"><span class="badge badge-MinusScore">@(log.GotReport ?? 0)</span></p>
+                    }
+                    else
+                    {
+                        @(log.GotReport?? 0)
+                    }
+
+                </td>
+
+                <td>
+                    @if (log.ReasonReportScore?.ReportReason != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-reportReason">@(log.ReasonReportScore.ReportReason)</span></p>
+
+                    }
+                    else
+                    {
+                        <p>N/A</p>
+                    }
+                </td>
+
+
+
+                <td>
+                    @if (log.WarnedByAdmin != null)
+                    {
+
+                        <p style="font-size:20px"><span class="badge badge-MinusScore">@(log.WarnedByAdmin ?? 0)</span></p>
+
+                    }
+                    else
+                    {
+                        @(log.WarnedByAdmin ?? 0)
+                    }
+                </td>
+
+                <td>
+
+                    @if (log.DeletedByAdmin != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-MinusScore">@(log.DeletedByAdmin ?? 0)</span></p>
+
+                    }
+                    else
+                    {
+                        @(log.DeletedByAdmin ?? 0)
+                    }
+                </td>
+
+                <td>
+                    @if (log.GotVoteUp != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-plusScore">+@(log.GotVoteUp ?? 0)</span></p>
+
+                    }
+                    else
+                    {
+                        @(log.GotVoteUp ?? 0)
+                    }
+                </td>
+
+
+
+                <td>
+                    @if (log.GotVoteDown != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-MinusScore">@(log.GotVoteDown ?? 0)</span></p>
+
+                    }
+                    else
+                    {
+                        @(log.GotVoteDown ?? 0)
+                    }
+                </td>
+
+
+                <td>
+                    @if (log.UpdateScoreByAdmin != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-plusScore">+@(log.UpdateScoreByAdmin ?? 0)</span></p>
+
+                    }
+                    else
+                    {
+                        @(log.UpdateScoreByAdmin ?? 0)
+                    }
+                </td>
+
+                <td>
+                    @if (log.GotThankTo != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-plusScore">+@(log.GotThankTo ?? 0)</span></p>
+
+                    }
+                    else
+                    {
+                        @(log.GotThankTo ?? 0)
+                    }
+                </td>
+
+
+                <td>@(log.OldScore?? 0)</td>
+            </tr>
+            no++;
+        }
+    </tbody>
+</table>
+<style>
+    /* Base style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#ScoreHistoryTableByUser').DataTable();
+    });
+</script>
+

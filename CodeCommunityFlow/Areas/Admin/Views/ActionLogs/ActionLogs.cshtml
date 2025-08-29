@@ -1,0 +1,108 @@
+﻿@model List<CodeCommunityFlow.ViewModels.AdminActionLogsViewModel>
+@{
+    ViewBag.Title = "Action Logs";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+
+<table class="table table-responsive-xl" id="ActionLogsTable">
+    <thead>
+        <tr>
+            <th>No.</th>
+
+            <th>Action</th>
+            <th>Action By Admin</th>
+            <th>User Name</th>
+           
+            <th>DateTime</th>
+            
+
+        </tr>
+    </thead>
+    @{ int no = 1;
+    }
+    @foreach (var log in Model)
+    {
+        <tr>
+
+            <td>@no</td>
+
+            <td>
+                @if (log.ActionName !=null)
+                {
+                    <p style="font-size:20px">@Html.DisplayFor(type => log.ActionName)</p>
+                }
+                
+
+
+            </td>
+
+            <td><p style="font-size:20px"><span class="badge badge-primary">@Html.DisplayFor(report => log.Admin.AdminName)</span></p></td>
+            
+            <td>
+                @if (log.UserName != null)
+                {
+                    <p>@Html.DisplayFor(report => log.UserName)</p>
+                }
+                else
+                {
+                    <p style="font-size:20px"><span class="badge badge-dark">N/A</span></p>
+                }
+            </td>
+        
+
+            <td>@Html.DisplayFor(time => log.ActionDateTime)</td>
+            
+
+        </tr>
+        no++;
+    }
+
+
+</table>
+<style>
+    /* Base style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+
+
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#ActionLogsTable').DataTable();
+    });
+</script>
+

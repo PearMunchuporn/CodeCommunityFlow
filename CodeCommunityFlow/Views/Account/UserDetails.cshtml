@@ -1,0 +1,97 @@
+﻿@model CodeCommunityFlow.ViewModels.UserViewModel
+@{
+    ViewBag.Title = "User's Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4 class="my-4">User's Profile</h4>
+
+<div class="container">
+    <div class="main-body">
+
+
+        <!-- /Breadcrumb -->
+
+        <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-center text-center">
+                            @{
+                                string imageUrl;
+                                if (string.IsNullOrEmpty(Model.ImageUser))
+                                {
+                                    imageUrl = Url.Content("~/Images/UsersImage/user.png");
+                                }
+                                else
+                                {
+                                    imageUrl = Url.Content("~/Uploads/ImageUsers/" + Model.ImageUser);
+                                }
+                            }
+                            <div class="my-2 d-flex justify-content-center">
+                                <img src="@imageUrl" class="img-fluid rounded" width="auto" style="height:150px" />
+                            </div>
+
+                            <div class="mt-3">
+                                <h4>@Model.UserName</h4>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">User Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                @Model.UserName
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Score</h6>
+
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                @Model.Score
+                                @if (ViewBag.IsTopUser != null && (bool)ViewBag.IsTopUser)
+                                {
+
+
+                                    if (Convert.ToInt32(Session["CurrentUserID"]) == Model.UserID)
+                                    {
+
+                                        <span>🎉</span>
+                                        <span class="badge badge-success">
+                                            You are the top contributor!
+                                        </span><span>🎉</span>
+                                    }
+
+
+                                    else
+                                    {   <span>🤩</span>
+                                        <span class="badge badge-success">
+
+                                            This User is the top contributor!
+                                        </span><span>🤩</span>
+                                    }
+
+
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

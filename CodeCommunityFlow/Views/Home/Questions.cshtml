@@ -1,0 +1,165 @@
+﻿@model List<CodeCommunityFlow.ViewModels.QuestionViewModel>
+@{
+    ViewBag.Title = "Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4 class="my-4">All Questions</h4>
+
+@if (Session["CurrentUserName"] != null)
+{
+    <a href="/CreateNewQuestion" class="btn btn-primary">Add New Question</a>
+    <br />
+    <br />
+}
+
+<table id="questionsTable" class="table table-borderless table-hover">
+    <thead>
+        <tr>
+            <th>Votes Count</th>
+            <th>Answers Count</th>
+            <th>Views</th>
+            <th>Question</th>
+            <th style="width:10%">Posted By</th>
+            <th>Posted Date Time</th>
+            <th>Edit Question</th>
+            <th>Delete Question</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+
+            <td><span class="badge badge-customVoteCount">@item.VotesCount </span>@(item.VotesCount > 1 ? " Votes" : " Vote")</td>
+            <td><span class="badge badge-AnswersCount">@item.AnswersCount </span>@(item.AnswersCount > 1 ? " Answers" : " Answer")</td>
+            <td><span class="badge badge-ViewsCount">@item.ViewsCount </span>@(item.ViewsCount > 1 ? " Views" : " View")</td>
+
+            <td>
+                <a href="@Url.Action("View", "Questions", new { id = item.QuestionID })">
+                    @item.QuestionName
+                </a>
+                <br />
+                <span class="badge badge-category">@item.Categories.CatagoryName</span>
+            </td>
+            <td>
+                @if (Convert.ToInt32(Session["CurrentUserID"]) != item.UserID)
+                {
+                    <p class="text-name">by @item.Users.UserName</p>
+                }
+                else
+                {
+                    <p class="text-name">by you</p>
+                }
+            </td>
+            <td class="text-muted">@item.QuestionDateTime</td>
+            <td>
+                @if (Convert.ToInt32(Session["CurrentUserID"]) == item.UserID)
+                {
+                    <a href="/EditQuestion/@item.QuestionID" class="btn btn-sm btn-warning">Edit</a>
+                }
+            </td>
+            <td>
+                @if (Convert.ToInt32(Session["CurrentUserID"]) == item.UserID)
+                {
+                    <button type="button" class="btn btn-sm btn-danger"
+                            data-toggle="modal" data-target="#deleteQuestionModal"
+                            data-question-id="@item.QuestionID">
+                        Delete
+                    </button>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteQuestionModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete your question?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+    /* Base style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+
+
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#questionsTable').DataTable({
+            paging: true,
+            ordering: true,
+            info: true,
+            columnDefs: [
+                { orderable: false, targets: [6, 7] }
+            ],
+            drawCallback: function () {
+                bindDeleteButtons();
+            }
+        });
+
+        function bindDeleteButtons() {
+            $('[data-toggle="modal"]').off('click').on('click', function () {
+                var QId = $(this).data('question-id');
+                var deleteUrl = '/Questions/DeleteQuestion/' + QId;
+                $('#deleteForm').attr('action', deleteUrl);
+            });
+        }
+
+        bindDeleteButtons(); // First time binding
+
+        $("a[href='/AllQuestions']").attr("id", "active");
+    });
+</script>

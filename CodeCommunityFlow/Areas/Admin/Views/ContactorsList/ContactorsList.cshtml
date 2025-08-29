@@ -1,0 +1,89 @@
+﻿@model List<CodeCommunityFlow.ViewModels.ContactViewModel>
+@{
+    ViewBag.Title = "Contactors List";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+<h4 class="my-4">Report Logs</h4>
+
+
+<table class="table table-responsive-xl" id="contactorTable">
+    <thead>
+        <tr>
+            
+            <th>Contactor ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Company</th>
+            <th>Country</th>
+            <th>How know us</th>
+            
+        </tr>
+    </thead>
+    @{ int no = 1;
+    }
+    @foreach (var contactors in Model)
+    {
+        <tr>
+
+          
+            <td>@contactors.ContactID</td>
+            <td>@contactors.FirstName</td>
+            <td>@contactors.LastName</td>
+            <td>@contactors.WorkEmail</td>
+            <td>@contactors.Company</td>
+            <td>@contactors.Country</td>
+            <td><p style="font-size:20px; color:#fff"><span class="badge badge-know">@Html.DisplayFor(know => contactors.HowKnowUs.Know)</span></p></td>
+
+        </tr>
+        no++;
+    }
+
+
+</table>
+<style>
+    /* Base style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+
+
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#contactorTable').DataTable();
+    });
+</script>

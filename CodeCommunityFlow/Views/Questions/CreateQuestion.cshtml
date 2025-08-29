@@ -1,0 +1,176 @@
+﻿@model CodeCommunityFlow.ViewModelFiles.AddImgQuestion
+@{
+    ViewBag.Title = "Add Question";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4 class="mt-5 ml-5">Add the question when you struck with you code</h4>
+<div class="container mt-5">
+
+
+
+    <div class="modal fade" id="ModalWarning">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h4 class="modal-title">Please Read Before Ask the Question</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-auto">
+                    <p style="text-indent:1.5rem">We encourage you to ask about something that you're curious about, but please read about CodeCommunityFlow's rules</p>
+                    <p>1. Use polite words and sentences.</p>
+                    <p>2. Do not ask about something that is not related to technology, coding, etc.</p>
+                    <p>3. Please respect each other and maintain a community atmosphere. </p>
+                    <p>4. Do not mention to 3rd parties in negative way</p>
+                    <p>5. Do not post something related to hate speech to others</p>
+                    <p>6. Do not post topics about sexuality or nudity</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">OK, I accept the rules</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12 border bg-Question">
+        <label>Add Topic Question</label>
+        <form action="@Url.Action("CreateQuestion", "Questions")" method="post" class="needs-validation" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input class="col-md-12 form-control" type="text" name="QuestionName" placeholder="Add you topic question" />
+
+            <div class="invalid-feedback d-none" id="invalidMsg">Please add the topic of question</div>
+
+            <br />
+
+            @Html.LabelFor(m => m.CategoryID, "Category of Topic")
+
+            @Html.DropDownListFor(m => m.CategoryID,
+                new SelectList(ViewBag.Categories, "CategoryID", "CatagoryName"),
+                "Please select category of question topic",
+                new { @class = "form-control col-md-6" })
+
+            @*@Html.ValidationMessageFor(m => m.CategoryID)*@
+            <div class="invalid-feedback d-none" id="invalidMsgCategory">Please select category of question topic.</div>
+            <br />
+            <label>Add your question content</label>
+            <div class="form-group">
+                <textarea class="form-control" rows="10" placeholder="Enter your question content"
+                          name="QuestionContent"></textarea>
+
+            </div>
+            <br />
+            <div class="form-group">
+
+                <label>Select files to upload (optional):</label>
+                <input type="file" name="Files" multiple class="form-control" />
+            </div>
+            <br />
+
+            <button class="btn btn-primary" type="submit">Add Question</button>
+            <a href="/Index" class="btn btn-danger">Cancel</a>
+            @*@Html.ValidationSummary()*@
+        </form>
+    </div>
+</div>
+<style>
+    .valid-feedback,
+    .invalid-feedback {
+        display: block;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+</style>
+
+
+
+
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const forms = document.querySelectorAll(".needs-validation");
+
+        forms.forEach(form => {
+            const textarea = form.querySelector("input[name='QuestionName']");
+            const categorySelect = form.querySelector("select[name='CategoryID']");
+            const invalidMsg = form.querySelector("#invalidMsg");
+            const validMsg = form.querySelector("#validMsg");
+            const invalidCategoryMsg = form.querySelector("#invalidMsgCategory");
+
+            // ✅ Submit validation
+            form.addEventListener("submit", function (e) {
+                let hasError = false;
+
+                // Validate QuestionName
+                if (!textarea.value.trim()) {
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                    hasError = true;
+                }
+
+                // ✅ Validate CategoryID (not empty or default placeholder)
+                //if (!categorySelect.value || categorySelect.value === "") {
+                //    categorySelect.classList.add("is-invalid");
+                //    categorySelect.classList.remove("is-valid");
+                //    if (invalidCategoryMsg) invalidCategoryMsg.classList.remove("d-none");
+                //    hasError = true;
+                //}
+
+                if (hasError) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
+            // ✅ Real-time validation for QuestionName
+            textarea.addEventListener("input", function () {
+                if (textarea.value.trim().length > 0) {
+                    textarea.classList.add("is-valid");
+                    textarea.classList.remove("is-invalid");
+                    if (validMsg) validMsg.classList.remove("d-none");
+                    if (invalidMsg) invalidMsg.classList.add("d-none");
+                } else {
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                }
+            });
+
+            // ✅ Real-time validation for CategoryID
+            categorySelect.addEventListener("change", function () {
+                if (categorySelect.value && categorySelect.value !== "") {
+                    categorySelect.classList.add("is-valid");
+                    categorySelect.classList.remove("is-invalid");
+                    if (invalidCategoryMsg) invalidCategoryMsg.classList.add("d-none");
+                } else {
+                    categorySelect.classList.add("is-invalid");
+                    categorySelect.classList.remove("is-valid");
+                    if (invalidCategoryMsg) invalidCategoryMsg.classList.remove("d-none");
+                }
+            });
+        });
+    });
+
+
+</script>
+@section scripts {
+    <script>
+        $(window).on('load', function () {
+            var delayMs = 500;
+
+            setTimeout(function () {
+                $('#ModalWarning').modal('show');
+            }, delayMs);
+
+        });
+    </script>
+
+}

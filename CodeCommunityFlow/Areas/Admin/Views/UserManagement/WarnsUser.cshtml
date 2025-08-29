@@ -1,0 +1,38 @@
+﻿@model CodeCommunityFlow.ViewModels.WarnUserViewModel
+
+@{
+    ViewBag.Title = "WarnsUser";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+<h4 class="my-4">Report Reason Information</h4>
+<div>
+    @Html.Partial("ReportPartial", Model.ReportReasonTable)
+</div>
+
+
+<h4 class="my-4">User's Report History</h4>
+<div>
+    @Html.Partial("ReportLogPartialByUser", Model.ReportLogUser)
+</div>
+
+<h4 class="my-3">Message to Warn User</h4>
+
+<p style="font-size:20px;"><span class="badge badge-warnUser">If Admin warns user, this user will get minus score -30 per one warning.</span></p>
+
+
+@using (Html.BeginForm("WarnUser", "UserManagement", new { area = "Admin", id = Model.UserID }, FormMethod.Post))
+{@Html.AntiForgeryToken()
+<br />
+<div class="col-md-8">
+    @Html.TextAreaFor(m => m.WarningMessage, new { @class = "form-control", rows = 5, required = "required" })
+</div>
+
+<br />
+<input type="hidden" value="@Model.UserID" name="UserID" />
+<button type="submit" class="btn btn-warning">Send Message To Warn User</button>
+<a href="/Admin/UserViewProfile/UserViewProfile/@Model.UserID" class="btn btn-danger">Cancel</a>
+@Html.ValidationSummary()
+}
+<br />
+

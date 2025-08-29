@@ -1,0 +1,113 @@
+﻿@using System.Web.Optimization
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - CodeCommunityFlow (Admin)</title>
+
+    <!-- ✅ CSS First -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
+    <!-- ✅ Only 1 version of jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- ✅ Bootstrap JS with Popper included -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ✅ DataTables after jQuery -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- ✅ Optional -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- ✅ Your Site Scripts -->
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/site.js"></script>
+
+    @*@Styles.Render("~/Styles/bootstrap")*@
+    @Styles.Render("~/Styles/site")
+    @*@Scripts.Render("~/Scripts/bootstrap")*@ <!-- Make sure this doesn't reload jQuery or old Bootstrap -->
+</head>
+<body>
+
+        <nav class="navbar navbar-expand-sm text-light navbar-light">
+            <a class="navbar-brand" href="#">CodeCommunityFlow</a>
+
+
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#CollaspeNavBar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="collaspibleNav">
+                <ul class="navbar-nav active">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/Admin/Home/AdminIndex">Home</a>
+                    </li>
+
+
+
+                    @if (Session["CurrentAdminName"] != null)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                                <img src="~/Images/UsersImage/user.png" width="20" height="20" />
+                                @Session["CurrentAdminName"]
+                            </a>
+
+                            <div class="dropdown-menu bg-light">
+                                <a class="dropdown-item" href="/Logout">Logout</a>
+                              
+                                <a class="dropdown-item" href="/Admin/AdminUsers/ChangePassword">Change your password</a>
+                            </div>
+                        </li>
+                    }
+
+
+                </ul>
+            </div>
+
+            @*<form class="form-inline" action="/home/search/">
+                <input type="search" class="form-control mr-sm-2" style="width:150px" placeholder="Search..." name="search" />
+                <button class="btn btn-success">Search</button>   &nbsp &nbsp &nbsp
+            
+
+            </form>*@
+        </nav>
+   
+
+   
+
+        @RenderSection("Scripts", required: false)
+ 
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2 text-white" style="background-color:lightcyan; min-height:1050px; padding:0px;">
+                <div class="list-group">
+                    <b><a href="/Admin/AdminAnnouncement/Annoucement" class="list-group-item text-dark" style="background-color:transparent;">Announcement by Admin Team</a></b>
+                    <b><a href="/Admin/AdminUsers/AdminUsers" class="list-group-item text-dark" style="background-color:transparent;">Admin Users</a></b>
+                    <b><a href="/Admin/UserManagement/UsersManagement" class="list-group-item text-dark" style="background-color:transparent;">Users Management</a></b>
+                    <b><a href="/Admin/CategoriesManagement/Categorymanagement" class="list-group-item text-dark" style="background-color:transparent;">Categories Management</a></b>
+                    <b><a href="/Admin/QuestionsManagement/QuestionManagement" class="list-group-item text-dark" style="background-color:transparent;">Questions Management</a></b>
+                    <b><a href="/Admin/AnswersManagement/AnswerManagement" class="list-group-item text-dark" style="background-color:transparent;">Answers Management</a></b>
+                    <b><a href="/Admin/CommentManagement/CommentsManagement" class="list-group-item text-dark" style="background-color:transparent;">Comments Management</a></b>
+                    <b><a href="/Admin/ContactorsList/ContactorsList" class="list-group-item text-dark" style="background-color:transparent;">Contactors List</a></b>
+                    <b><a href="/Admin/ReportManagement/ReportManagement" class="list-group-item text-dark" style="background-color:transparent;">Reports Management</a></b>
+                    <b><a href="/Admin/ReportLogs/ReportLogs" class="list-group-item text-dark" style="background-color:transparent;">Report Logs</a></b>
+                    <b><a href="/Admin/ActionLogs/ActionLogs" class="list-group-item text-dark" style="background-color:transparent;">Action Logs</a></b>
+                    @*@RenderSection("SlideBarOptions", required: false)*@
+                </div>
+            </div>
+            <div class="col-10" style="min-height:610px">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

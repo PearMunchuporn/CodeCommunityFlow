@@ -1,0 +1,168 @@
+﻿@model List<CodeCommunityFlow.ViewModels.DeleteLogsViewModel>
+
+@{
+    int No = 1;
+
+    // Keep track of admin deletes per user
+    Dictionary<int, int> AdminDeleteQA = new Dictionary<int, int>();
+}
+
+<p style="font-size:20px"><span class="badge badge-danger">If admin delete user's answer or question, The score will be deducted -50 per time.</span></p>
+<table id="DeleteLogsTable" class="table table-bordered table-striped my-custom-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Deleted Question</th>
+            <th>Deleted Answer</th>
+            <th>Deleted Comment</th>
+            <th>Deletion Type</th>
+            <th>Deleted Date</th>
+            <th>Deleted By Admin</th>
+            <th>Delete Count</th>
+        
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var deleteLogs in Model)
+        {
+            var userId = deleteLogs.UserDeletion?.UserID ?? 0;
+
+            // Only count admin deletes
+            int currentDeleteIndex = 0;
+            if (deleteLogs.DeleteByAdmin)
+            {
+                if (!AdminDeleteQA.ContainsKey(userId))
+                {
+                    AdminDeleteQA[userId] = 1;
+                }
+                else
+                {
+                    AdminDeleteQA[userId]++;
+                }
+
+                currentDeleteIndex = AdminDeleteQA[userId];
+            }
+
+            var deleteCount = deleteLogs.UserDeletion?.DeletebyAdminCount ?? 0;
+         
+        <tr>
+            <td>@No</td>
+            <td>
+                @if (deleteLogs.Question?.QuestionName == null)
+                {
+                    <span class="badge badge-dark">N/A</span>
+                }
+                else
+                {
+                    @deleteLogs.Question.QuestionName
+                }
+            </td>
+
+            <td>
+                @if (deleteLogs.Answer?.AnswerText == null)
+                {
+                    <span class="badge badge-dark">N/A</span>
+                }
+                else
+                {
+                    @deleteLogs.Answer.AnswerText
+                }
+            </td>
+
+
+            <td>
+                @if (deleteLogs.Comment?.CommentContent == null)
+                {
+                    <span class="badge badge-dark">N/A</span>
+                }
+                else
+                {
+                    @deleteLogs.Comment.CommentContent
+                }
+            </td>
+            <td>
+                @if (deleteLogs.DeletionType == "Answer")
+                {
+                    <p ><span class="badge badge-answer"  style="font-size: 16px;" >@deleteLogs.DeletionType</span></p>
+                }
+                else if (deleteLogs.DeletionType == "Question")
+                {
+                    <span class="badge badge-question" style="font-size: 16px;" >@deleteLogs.DeletionType</span>
+                }
+                else
+                {
+                    <span class="badge badge-comment"  style="font-size: 16px;" >@deleteLogs.DeletionType</span>
+                }
+            </td>
+
+            <td>@(deleteLogs.DeleteDateTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A")</td>
+            <td>
+                @if (deleteLogs.DeleteByAdmin)
+                {
+                    <span class="badge badge-true" style="font-size: 18px; color: white;">True</span>
+                }
+                else
+                {
+                    <span class="badge badge-false" style="font-size: 18px; color: white;">False</span>
+                }
+            </td>
+            <td>
+                @if (deleteLogs.DeleteByAdmin)
+                {
+                    <p>[<strong>@currentDeleteIndex</strong>] of @deleteCount</p>
+                }
+                else
+                {
+                    <p>N/A</p>
+                }
+            </td>
+
+        </tr>
+
+            No++;
+        }
+    </tbody>
+</table>
+<style>
+    /* Base style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#DeleteLogsTable').DataTable();
+    });
+</script>

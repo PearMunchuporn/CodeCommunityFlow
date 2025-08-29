@@ -1,0 +1,56 @@
+﻿@model List<CodeCommunityFlow.ViewModels.ReportViewModel>
+@{
+    ViewBag.Title = "Report Management";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+@if (TempData["AddReportReason"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["AddReportReason"]</div>
+}
+
+@if (TempData["EditReportReason"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["EditReportReason"]</div>
+}
+
+<h4 class="mt-4">Report Management</h4>
+<br />
+<a href="/admin/ReportManagement/CreateReportReason" class="btn btn-primary">Add Report Reason</a>
+<table class="table table-responsive mt-4">
+
+    <tr>
+        <td>No.</td>
+        <th>Report Reason</th>
+        <th>Score Effect</th>
+    </tr>
+
+
+    @{
+        int no = 1;
+    }
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@no</td>
+            <td>@item.ReportReason</td>
+            <td>@item.ScoreMinus</td>
+            <td><a href="/Admin/ReportManagement/EditReportReason/@item.ReportID" class="btn btn-warning">Edit</a></td>
+        </tr>
+        no++;
+    }
+
+
+</table>
+
+<script>
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+</script>

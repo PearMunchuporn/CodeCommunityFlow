@@ -1,0 +1,115 @@
+﻿@model List<CodeCommunityFlow.ViewModels.ReportLogsDTO>
+
+
+<h4 class="my-4">User's Report Logs</h4>
+<table id="reportlogsTableByUser" class="table table-bordered table-striped my-custom-table">
+    <thead>
+        <tr>
+            <th>Report Logs No.</th>
+            <th>Reporter</th>
+            <th>Reported User</th>
+            <th>Report Reason</th>
+            <th>Score Deducted</th>
+            <th>Reported Question</th>
+            <th>Reported Answer</th>
+            <th>Reported Time</th>
+            <th>Report Type</th>
+            <th>Admin Warning Count</th>
+            <th>Score Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var log in Model)
+        {
+
+
+            <tr>
+                <td>@no</td>
+                <td>@(log.Reporter?.UserName ?? "N/A")</td>
+                <td>@(log.ReportedUser?.UserName ?? "N/A")</td>
+                <td>
+                    @if (log.Report?.ReportReason != null)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-warning">@Html.DisplayFor(type => log.Report.ReportReason)</span></p>
+                    }
+                    else
+                    {
+                        <p style="font-size:20px"><span class="badge badge-warning">@Html.DisplayFor(type => log.Report.ReportReason)</span></p>
+                    }
+
+                </td>
+                <td>@(log.Report?.ScoreMinus)</td>
+                <td>@(log.Questions?.QuestionName ?? "N/A")</td>
+                <td>@(log.Answers?.AnswerText ?? "N/A")</td>
+                <td>@(log.ReportedTime)</td>
+                <td>
+                    @if (log.ReportType == "Reported Question")
+                    {
+                        <p style="font-size:20px"><span class="badge badge-question">@Html.DisplayFor(type => log.ReportType)</span></p>
+
+                    }
+                    else if (log.ReportType == "Reported Answer")
+                    {
+                        <p style="font-size:20px"><span class="badge badge-answer">@Html.DisplayFor(type => log.ReportType)</span></p>
+                    }
+                    else
+                    {
+                        <p style="font-size:20px"><span class="badge badge-comment">@Html.DisplayFor(type => log.ReportType)</span></p>
+                    }
+
+                </td>
+
+
+                <td>@(log.ReportedUser?.WarningCount ?? 0)</td>
+                <td>@(log.ReportedUser?.Score ?? 0)</td>
+            </tr>
+            no++;
+        }
+    </tbody>
+</table>
+<style>
+    /* Base style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#reportlogsTableByUser').DataTable();
+    });
+</script>

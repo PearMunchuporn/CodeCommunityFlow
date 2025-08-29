@@ -1,0 +1,104 @@
+﻿@model CodeCommunityFlow.ViewModels.AdminAnnouncementViewModels
+@{
+    ViewBag.Title = "Add Announcement";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+
+
+<h4 class="my-4">Add Annoucement</h4>
+<div class="container mt-2">
+
+
+
+    <div class="col-md-12 border bg-Question">
+        <label>Add Topic Question</label>
+        <form action="@Url.Action("AddAnnouncement", "AdminAnnouncement")" method="post" class="needs-validation" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input class="col-md-12 form-control" type="text" name="AdminAnnounceTopic" placeholder="Add you topic annountment" />
+
+            <div class="invalid-feedback d-none" id="invalidMsg">Please add the topic of announcement</div>
+
+            <br />
+            <label>Add Your Announment Content</label>
+            <div class="form-group">
+                <textarea class="form-control" rows="10" placeholder="Enter your announcement content"
+                          name="AdminAnnounceContent"></textarea>
+
+            </div>
+            <br />
+            <div class="form-group">
+
+                <label>Select files to upload (optional):</label>
+                <input type="file" name="Files" multiple class="form-control" />
+            </div>
+            <br />
+
+            <button class="btn btn-primary" type="submit">Add Announcement</button>
+            <a href="/Admin/Home" class="btn btn-danger">Cancel</a>
+            @Html.ValidationSummary()
+        </form>
+    </div>
+</div>
+<style>
+    .valid-feedback,
+    .invalid-feedback {
+        display: block;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const forms = document.querySelectorAll(".needs-validation");
+
+        forms.forEach(form => {
+            const textarea = form.querySelector("input[name='AdminAnnounceTopic']");
+
+            const invalidMsg = form.querySelector("#invalidMsg");
+            const validMsg = form.querySelector("#validMsg");
+         
+
+            // ✅ Submit validation
+            form.addEventListener("submit", function (e) {
+                let hasError = false;
+
+                // Validate QuestionName
+                if (!textarea.value.trim()) {
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                    hasError = true;
+                }
+
+
+                if (hasError) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
+            // ✅ Real-time validation for QuestionName
+            textarea.addEventListener("input", function () {
+                if (textarea.value.trim().length > 0) {
+                    textarea.classList.add("is-valid");
+                    textarea.classList.remove("is-invalid");
+                    if (validMsg) validMsg.classList.remove("d-none");
+                    if (invalidMsg) invalidMsg.classList.add("d-none");
+                } else {
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                }
+            });
+
+        });
+    });
+
+
+</script>

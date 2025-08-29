@@ -1,0 +1,164 @@
+﻿@model CodeCommunityFlow.ViewModels.QuestionViewModel
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<h4 class="mt-5 ml-5">Edit your question</h4>
+<div class="container mt-5">
+
+    <!---Modal Warning-->
+
+    <div class="modal fade" id="ModalWarning">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h4 class="modal-title">Please Read Before Ask the Question</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-auto">
+                    <p style="text-indent:1.5rem">We encourage you to ask about something that you're curious about, but please read about CodeCommunityFlow's rules</p>
+                    <p>1. Use polite words and sentences.</p>
+                    <p>2. Do not ask about something that is not related to technology, coding, etc.</p>
+                    <p>3. Please respect each other and maintain a community atmosphere. </p>
+                    <p>4. Do not mention to 3rd parties in negative way</p>
+                    <p>5. Do not post something related to hate speech to others</p>
+                    <p>6. Do not post topics about sexuality or nudity</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">OK, I accept the rules</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12 border bg-Question">
+        <label>Topic Question</label>
+        <form action="@Url.Action("EditQuestion", "Questions")" method="post" class="needs-validation" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input class="col-md-12 form-control" type="text" name="QuestionName" value="@Model.QuestionName" placeholder="Edit you topic question" />
+
+            <div class="invalid-feedback d-none" id="invalidMsg">Please add the topic of question</div>
+
+            <br />
+            <span class="badge badge-category">@Model.Categories.CatagoryName</span>
+            <input type="hidden" value="@Model.CategoryID" name="CategoryID" />
+            <input type="hidden" value="@Model.UserID" name="UserID" />
+            <input type="hidden" value="@Model.QuestionID" name="QuestionID" />
+            <input class="col-sm-12 form-control" value="@Model.Categories.CatagoryName" name="CatagoryName" disabled />
+
+            <div class="invalid-feedback d-none" id="invalidMsg">Please select category of question topic.</div>
+            <br />
+            <label>Add you question content</label>
+            <div class="form-group">
+                <textarea class="form-control" rows="10" value="@Model.QuestionContent" placeholder="Enter your question content"
+                          name="QuestionContent">@Model.QuestionContent</textarea>
+
+            </div>
+            <br />
+
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                var imagePaths = Model.Image.Split(';');
+
+                int imgIndex = 0;
+                var checkboxId = $"delete_{imgIndex}";
+                foreach (var path in imagePaths)
+                {
+                    <div class="my-2 d-flex justify-content-center">
+                        <img src="@path" class="img-fluid" style="max-width: 50%; height: auto;" />
+                    </div>
+                    <div class="form-check mt-1">
+                        <input type="checkbox" class="form-check-input" name="CheckDeleteImage[]" value="@path" id="@checkboxId" />
+                        <label class="form-check-label" for="@checkboxId">Delete this image</label>
+                    </div>
+                    imgIndex++;
+                }
+            }
+
+
+            <div class="form-group">
+
+                <label>Select files to upload (optional):</label>
+                <input type="file" name="Files" multiple class="form-control" />
+                <input type="hidden" name="ImgOld" value="@Model.Image" />
+            </div>
+            <br />
+            <button class="btn btn-warning" type="submit">Update Question</button>
+            <a class="btn btn-danger" href="/Questions/View/@Model.QuestionID">Cancel</a>
+            @Html.ValidationSummary()
+        </form>
+    </div>
+</div>
+
+<style>
+    .valid-feedback,
+    .invalid-feedback {
+        display: block;
+        margin-top: 5px;
+        font-weight: 600;
+        color: red;
+    }
+</style>
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const forms = document.querySelectorAll(".needs-validation");
+
+        forms.forEach(form => {
+            const textarea = form.querySelector("input[name='QuestionName']");
+            const invalidMsg = form.querySelector("#invalidMsg");
+            const validMsg = form.querySelector("#validMsg");
+
+            // Submit validation
+            form.addEventListener("submit", function (e) {
+                if (!textarea.value.trim()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                }
+            });
+
+            // Real-time validation
+            textarea.addEventListener("input", function () {
+                if (textarea.value.trim().length > 0) {
+                    textarea.classList.add("is-valid");
+                    textarea.classList.remove("is-invalid");
+                    if (validMsg) validMsg.classList.remove("d-none");
+                    if (invalidMsg) invalidMsg.classList.add("d-none");
+                } else {
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                }
+            });
+        });
+    });
+
+
+</script>
+@section scripts {
+    <script>
+            $(window).on('load', function () {
+                var delayMs = 500;         
+              
+                    setTimeout(function () {
+                        $('#ModalWarning').modal('show');
+                    }, delayMs);
+                
+            });
+        </script>
+   
+}

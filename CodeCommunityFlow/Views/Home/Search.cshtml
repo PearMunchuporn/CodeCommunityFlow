@@ -1,0 +1,26 @@
+﻿@model List<CodeCommunityFlow.ViewModels.QuestionViewModel>
+@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h4 class="mt-4">Search result for @ViewBag.search</h4>
+        <br />
+        <table class="table">
+
+            @foreach (var questions in Model)
+            {
+
+                Html.RenderPartial("QuestionView", questions);
+            }
+
+        </table>
+    </div>
+</div>
+
+<script>
+
+    $("a[href='/AllQuestions']").attr("id", "active");
+</script>

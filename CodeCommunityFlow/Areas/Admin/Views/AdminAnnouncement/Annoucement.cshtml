@@ -1,0 +1,182 @@
+﻿@model List<CodeCommunityFlow.ViewModels.AdminAnnouncementViewModels>
+@{
+    ViewBag.Title = "Annoucement";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+<h4 class="my-4">Annoucement By Admin Team</h4>
+
+
+@if (TempData["DelectAnnouce"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["DelectAnnouce"]</div>
+}
+@if (Session["CurrentAdminName"] != null)
+{
+    <a href="/Admin/AdminAnnouncement/AddAnnouncement" class="btn btn-primary">Add New Announcement</a>
+    <br />
+    <br />
+}
+<table id="announcementsTable" class="table table-borderless table-hover">
+    <thead>
+        <tr>
+            <th>Votes Count</th>
+            <th>Comment Count</th>
+            <th>Views</th>
+            <th>Announcement</th>
+            <th style="width:10%">Posted By</th>
+            <th>Posted Date Time</th>
+            <th>Edit Announcement</th>
+            <th>Delete Announcement</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Model in Model) 
+        {
+            <tr>
+                <td><span class="badge badge-customVoteCount">@Model.VoteCount</span>&nbsp; @(Model.VoteCount  >1 ? " Votes" : " Vote")</td>
+                <td><span class="badge badge-AnswersCount">@Model.CommentCount</span>&nbsp;Comments</td>
+                <td><span class="badge badge-ViewsCount">@Model.ViewCount</span>&nbsp;Views</td>
+                <td>
+                    <a href="@Url.Action("ViewAnnouncement", "AdminAnnouncement", new { id = Model.AdminAnnouncementID })">
+                        @Model.AdminAnnounceTopic
+                    </a>
+                    <br />
+                    <span class="badge badge-category">@Model.Category</span>
+                </td>
+                <td>
+                    @if (Convert.ToInt32(Session["CurrentAdminID"]) != Model.AdminID)
+                    {
+                        <p class="text-name">by @Model.AdminUsers.AdminName</p>
+                    }
+                    else
+                    {
+                        <p class="text-name">by you</p>
+                    }
+                </td>
+                <td class="text-muted">@Model.AnnouncementDateTime</td>
+                <td>
+
+                    @if (Convert.ToInt32(Session["CurrentAdminID"]) == Model.AdminID)
+                    {
+                        <a href="/Admin/AdminAnnouncement/EditAnnouncement/@Model.AdminAnnouncementID" class="btn btn-sm btn-warning">Edit</a>
+                    }
+                </td>
+                <td>
+                    @if (Convert.ToInt32(Session["CurrentAdminID"]) == Model.AdminID)
+                    {
+                        <button class="btn btn-sm btn-danger"
+                                data-toggle="modal" data-target="#deleteQuestionModal"
+                                data-announcement-id="@Model.AdminAnnouncementID">
+                            Delete
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<!-- Delete Confirmation Modal -->
+
+<div class="modal fade" id="deleteAnnouncementModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your announcement?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#announcementsTable').DataTable({
+            paging: true,
+            ordering: true,
+            info: true,
+            columnDefs: [
+                { orderable: false, targets: [6, 7] } // Disable sorting on Edit/Delete columns
+            ],
+            drawCallback: function () {
+                // Rebind modal trigger on redraw
+                $('[data-toggle="modal"]').off('click').on('click', function () {
+                    var announcemntID = $(this).data('announcement-id');
+                    var deleteUrl = '/Admin/AdminAnnouncement/DeleteAnnouncement/' + announcemntID;
+                    $('#confirmDeleteBtn').attr('href', deleteUrl);
+                    $('#deleteAnnouncementModal').modal('show');
+                });
+            }
+        });
+
+       
+        $(document).on('click', '#confirmDeleteBtn', function (e) {
+            e.preventDefault();
+            var deleteUrl = $(this).attr('href');
+            if (deleteUrl) {
+                window.location.href = deleteUrl;
+            }
+        });
+    });
+
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+</script>
+

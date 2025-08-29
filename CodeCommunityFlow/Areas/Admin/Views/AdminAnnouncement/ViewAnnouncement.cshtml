@@ -1,0 +1,225 @@
+﻿@model CodeCommunityFlow.ViewModels.AdminAnnouncementViewModels
+@{
+    ViewBag.Title = "View Announcement";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+
+<div class="container mt-5">
+    <div class="col-xl-12 question-container">
+
+        <div class="col-md-12 border bg-Question">
+            <h3 class="mb-3">@Model.AdminAnnounceTopic</h3>
+        </div>
+        <br />
+        @* Announce's Content Part *@
+        <div class="col-md-12 border bg-Question p-3">
+            @* Top of Announce's Content Status *@
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-3 w-100 parents-of-vote">
+                @* Right Side Announce's status Consist of Category, UserName, UserImage, vote System *@
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <span class="badge badge-categoryAnnouncement" style="font-size:16px;">@Model.Category</span>&nbsp;&nbsp;
+                    <span>
+                        By&nbsp;
+                        @if (Convert.ToInt32(Session["CurentAdminID"]) != Model.AdminID)
+                        {
+                            <span class="badge badge-primary" style="font-size:16px; color:#ffffff;">@Model.AdminUsers.AdminName</span>
+                        }
+                        @* This user's account was deleted *@
+                        else
+                        {
+                            <span>By You</span>
+                        }
+                        @**@
+                    </span>&nbsp;&nbsp;
+
+
+                    @*User has logged in and isn't owner the Question can vote *@
+                    <span class="text-muted">
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            @(Model.Description)
+                        }
+                    </span>&nbsp;&nbsp;
+                </div>
+                @*Left Side Question's Status Consist of Datetime, Answer Count, Vote Count *@
+            <div class="d-flex align-items-center flex-wrap gap-3">
+                <span class="text-muted">@Model.AnnouncementDateTime</span>&nbsp;&nbsp;
+
+
+                @if (Model.VoteCount > 1)
+                {
+                    <span class="badge badge-customVoteCount votecount">@Model.VoteCount Votes</span>
+                }
+                else
+                {
+                    <span class="badge badge-customVoteCount votecount">@Model.VoteCount Vote</span>
+                }&nbsp;&nbsp;
+
+                @if (Model.CommentCount == 0)
+                {
+                    <span class="text-danger">No any comments</span>
+                }
+                else if (Model.CommentCount == 1)
+                {
+                    <span class="badge badge-AnswersCount">@Model.CommentFromAnnouncement.Count Comment</span>
+                }
+                else
+                {
+                    <span class="badge badge-AnswersCount">@Model.CommentFromAnnouncement.Count Comments</span>
+                }&nbsp;&nbsp;
+
+
+                <span class="badge badge-ViewsCount">@Model.ViewCount @(Model.ViewCount > 1 ? "Views" : "View")</span>&nbsp;&nbsp;
+
+                @if (Convert.ToInt32(Session["CurrentAdminID"]) == Model.AdminID)
+                {
+                    <a href="/Admin/AdminAnnouncement/EditAnnouncement/@Model.AdminAnnouncementID" class="btn btn-warning">Edit</a><span>&nbsp;&nbsp;</span>
+                    <button class="btn btn-danger"
+                            type="button"
+                            data-toggle="modal"
+                            data-target="#deleteAnnounceModal"
+                            data-announce-id="@Model.AdminAnnouncementID">
+                        Delete
+                    </button>
+
+                }
+            </div>
+            </div>
+            @* Announce Content Consist of Text and Images *@
+            <hr />
+            @*Code style displaying no indent *@
+
+<pre class="p-3 rounded"><code class="language-html">
+@Html.Raw(System.Net.WebUtility.HtmlEncode(Model.AdminAnnounceContent))
+</code></pre>
+
+            @* Image of Question's Content *@
+            @if (!string.IsNullOrEmpty(Model.ImageContent))
+            {
+                var imagePaths = Model.ImageContent.Split(';');
+                foreach (var path in imagePaths)
+                {
+                    <div class="my-2 d-flex justify-content-center">
+                        <img src="@path" class="img-fluid rounded" style="max-width: 80%; height: auto;" />
+                    </div>
+                }
+            }
+        </div>
+        <br />
+
+
+
+    </div>
+
+    @* Comment Loop *@
+    @*Comment Contents*@
+
+    @for (int i = 0; i < Model.CommentFromAnnouncement.Count; i++)
+    {
+        var comment = Model.CommentFromAnnouncement[i];
+        var isOwner = Convert.ToInt32(Session["CurrentUserID"]) == comment.UserID;
+        var dropdownIdA = $"report-dropdown-{comment.CommentID}";
+        var commentedUser = comment.Users;
+
+        @* Display user profile *@
+        var imageFileNameAns = string.IsNullOrEmpty(commentedUser?.ImageUser)
+            ? Url.Content("~/Images/UsersImage/user.png")
+            : Url.Content("~/Uploads/ImageUsers/" + commentedUser.ImageUser);
+        <div class="bg-white p-3 bg-answer border">
+
+            <span class="badge badge-warning">Answer #@(i + 1)</span>
+
+            @*Answer Status *@
+            <div class="row">
+
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                    @*span vote*@
+                    &nbsp; &nbsp; <span class="badge badge-customVoteCount votescount">@comment.VoteCount Votes</span><br />&nbsp;&nbsp;
+
+
+                </div>
+            </div>
+            <div class="col-md-12 answer-container">
+                <div class="answer-display">
+                    <pre class="code-block-no-indent"><code>@Html.Raw(System.Net.WebUtility.HtmlEncode(comment.CommentContent))</code></pre>
+
+                    @* Answer Image *@
+                    @if (!string.IsNullOrEmpty(comment.Image))
+                    {
+                        var imagePaths = comment.Image.Split(';');
+                        foreach (var path in imagePaths)
+                        {
+                            if (!string.IsNullOrWhiteSpace(path))
+                            {
+                                <div class="col-12 d-flex justify-content-center my-3">
+                                    <img src="@path" class="img-fluid rounded" style="max-width: 80%; height: auto;" />
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+
+            </div>
+
+            <div class="row mt-2 align-items-center">
+                <div class="col-auto">
+
+                    @if (commentedUser != null)
+                    {
+                        <a href="@Url.Action("UserViewProfile", "UserViewProfile", new { id = commentedUser.UserID })">
+                            By @commentedUser.UserName
+                        </a>
+                    }
+                    else
+                    {
+                        <span>By Unknown</span>
+                    }
+
+                    <img src="@imageFileNameAns" width="30" class="rounded ml-2" />
+                    <span class="text-muted">
+                        @if (!string.IsNullOrEmpty(Model.CommentFromAnnouncement[i].Description))
+                        {
+                            @(Model.CommentFromAnnouncement[i].Description)
+                        }
+                    </span>&nbsp;&nbsp;
+                </div>
+                <div class="col text-right text-muted">
+                    @comment.CommentDateTime
+                </div>
+            </div>
+        </div>
+
+
+
+        <br />
+    }
+
+</div>
+<div class="modal fade" id="deleteAnnounceModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your announcement?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('[data-toggle="modal"]').off('click').on('click', function () {
+        var announcemntID = $(this).data('announce-id');
+        var deleteUrl = '/Admin/AdminAnnouncement/DeleteAnnouncement/' + announcemntID;
+        $('#confirmDeleteBtn').attr('href', deleteUrl);
+        $('#deleteAnnounceModal').modal('show');
+    });
+</script>

@@ -1,0 +1,200 @@
+
+@model YourNamespace.Models.QuestionViewModel
+
+@{
+    var imageFileName = string.IsNullOrEmpty(Model.Users?.ImageUser) ? "user.png" : Model.Users.ImageUser;
+    var userImage = Url.Content("~/Uploads/ImageUsers/" + imageFileName);
+}
+
+<!-- คำถาม -->
+<div class="question-block my-3">
+    <div class="d-flex align-items-center mb-2">
+        <img src="@userImage" width="30" class="rounded me-2" />
+        <strong>@Model.Users?.Name</strong>
+    </div>
+    <p>@Html.Raw(System.Net.WebUtility.HtmlEncode(Model.QuestionText))</p>
+
+    <!-- ปุ่มโหวตคำถาม -->
+    @if (Session["CurrentUserName"] != null && Convert.ToInt32(Session["CurrentUserID"]) != Model.UserID)
+    {
+        if (Model.CurrentUserVoteType == 1)
+        {
+            <img src="~/Images/Buttons Arrow/green up.png" class="btnUpVoteQuestion" style="cursor:pointer" width="30" height="30"
+                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+            <img src="~/Images/Buttons Arrow/down.png" class="btnDownVoteQuestion" style="cursor:pointer" width="30" height="30"
+                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+        }
+        else if (Model.CurrentUserVoteType == -1)
+        {
+            <img src="~/Images/Buttons Arrow/up.png" class="btnUpVoteQuestion" style="cursor:pointer" width="30" height="30"
+                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+            <img src="~/Images/Buttons Arrow/red down.png" class="btnDownVoteQuestion" style="cursor:pointer" width="30" height="30"
+                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+        }
+        else
+        {
+            <img src="~/Images/Buttons Arrow/up.png" class="btnUpVoteQuestion" style="cursor:pointer" width="30" height="30"
+                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+            <img src="~/Images/Buttons Arrow/down.png" class="btnDownVoteQuestion" style="cursor:pointer" width="30" height="30"
+                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+        }
+    }
+</div>
+
+<!-- ฟอร์มเพิ่มคำตอบ -->
+<form method="post" enctype="multipart/form-data" asp-action="AddAnswer">
+    <input type="hidden" name="QuestionID" value="@Model.QuestionID" />
+
+    <div class="form-group mb-2">
+        <label>คำตอบของคุณ</label>
+        <textarea name="AnswerText" class="form-control" required></textarea>
+    </div>
+
+    <label>แนบไฟล์ (ไม่บังคับ)</label>
+    <input type="file" name="UploadFiles" multiple class="form-control mb-2" />
+
+    <button type="submit" class="btn btn-primary">ส่งคำตอบ</button>
+</form>
+
+<hr />
+
+<!-- คำตอบทั้งหมด -->
+@for (int i = 0; i < Model.Answers.Count; i++)
+{
+    var answer = Model.Answers[i];
+    var user = answer.Users;
+    var answerImage = string.IsNullOrEmpty(user?.ImageUser) ? Url.Content("~/Images/UsersImage/user.png") : Url.Content("~/Uploads/ImageUsers/" + user.ImageUser);
+    var isOwner = Model.SessionID == user?.ID;
+    var imgPaths = answer.ImagesAnswer?.Split(',') ?? new string[0];
+    var imgIndex = 0;
+
+    <div class="card my-4 p-3">
+        <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center">
+                <img src="@answerImage" width="30" class="rounded me-2" />
+                <strong>@user?.Name</strong>
+            </div>
+
+            @if (isOwner)
+            {
+                <div>
+                    <a href="@Url.Action("EditAnswer", new { id = answer.AnswerID })" class="btn btn-sm btn-outline-primary">แก้ไข</a>
+                    <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal_@answer.AnswerID">ลบ</a>
+                </div>
+            }
+            else
+            {
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        รายงาน
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var reason in Model.ReportReasons)
+                        {
+                            <li>
+                                <a class="dropdown-item"
+                                   href="@Url.Action("ReportAnswer", new { answerID = answer.AnswerID, reasonID = reason.Value })">
+                                   @reason.Text
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+
+        <!-- ปุ่มโหวตคำตอบ -->
+        <div class="my-2">
+            @if (Session["CurrentUserName"] != null && Convert.ToInt32(Session["CurrentUserID"]) != answer.UserID)
+            {
+                if (answer.CurrentUserVoteType == 1)
+                {
+                    <img src="~/Images/Buttons Arrow/green up.png"
+                         class="btnUpVoteAnswer"
+                         style="cursor:pointer"
+                         width="30" height="30"
+                         data-answerid="@answer.AnswerID"
+                         data-userid="@answer.UserID" />
+                    <img src="~/Images/Buttons Arrow/down.png"
+                         class="btnDownVoteAnswer"
+                         style="cursor:pointer"
+                         width="30" height="30"
+                         data-answerid="@answer.AnswerID"
+                         data-userid="@answer.UserID" />
+                }
+                else if (answer.CurrentUserVoteType == -1)
+                {
+                    <img src="~/Images/Buttons Arrow/up.png"
+                         class="btnUpVoteAnswer"
+                         style="cursor:pointer"
+                         width="30" height="30"
+                         data-answerid="@answer.AnswerID"
+                         data-userid="@answer.UserID" />
+                    <img src="~/Images/Buttons Arrow/red down.png"
+                         class="btnDownVoteAnswer"
+                         style="cursor:pointer"
+                         width="30" height="30"
+                         data-answerid="@answer.AnswerID"
+                         data-userid="@answer.UserID" />
+                }
+                else
+                {
+                    <img src="~/Images/Buttons Arrow/up.png"
+                         class="btnUpVoteAnswer"
+                         style="cursor:pointer"
+                         width="30" height="30"
+                         data-answerid="@answer.AnswerID"
+                         data-userid="@answer.UserID" />
+                    <img src="~/Images/Buttons Arrow/down.png"
+                         class="btnDownVoteAnswer"
+                         style="cursor:pointer"
+                         width="30" height="30"
+                         data-answerid="@answer.AnswerID"
+                         data-userid="@answer.UserID" />
+                }
+            }
+        </div>
+
+        <!-- เนื้อหาคำตอบ -->
+        <p>@Html.Raw(System.Net.WebUtility.HtmlEncode(answer.AnswerText))</p>
+
+        <!-- รูปคำตอบ -->
+        @foreach (var img in imgPaths)
+        {
+            if (!string.IsNullOrWhiteSpace(img))
+            {
+                <div class="my-2 text-center">
+                    <img src="@img" class="img-fluid" style="max-width: 70%; height: auto;" />
+                </div>
+                <div class="form-check mb-2">
+                    <input type="checkbox" class="form-check-input" name="CheckDeleteImage[]" value="@img" id="delete_@i_@imgIndex" />
+                    <label class="form-check-label" for="delete_@i_@imgIndex">ลบรูปภาพนี้</label>
+                </div>
+                imgIndex++;
+            }
+        }
+
+        <div class="text-end text-muted">
+            <small>@answer.DateCreated.ToString("g")</small>
+        </div>
+    </div>
+
+    <!-- Modal ยืนยันลบ -->
+    <div class="modal fade" id="deleteModal_@answer.AnswerID" tabindex="-1" aria-labelledby="modalLabel_@answer.AnswerID" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalLabel_@answer.AnswerID">ยืนยันการลบ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    คุณต้องการลบคำตอบนี้ใช่หรือไม่?
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("DeleteAnswer", new { id = answer.AnswerID })" class="btn btn-danger">ลบ</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

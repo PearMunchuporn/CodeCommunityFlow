@@ -1,0 +1,99 @@
+﻿@model CodeCommunityFlow.ViewModels.AdminAnnouncementViewModels
+
+@{
+    ViewBag.Title = "Announcement By Admin";
+}
+
+
+    <tr>
+        <td style="width: 10%;">
+            @if (Model.VoteCount> 1)
+            {
+                <p><span class="badge badge-customVoteCount">@Model.VoteCount</span> Votes</p>
+            }
+            else
+            {
+                <p>
+                    <span class="badge badge-customVoteCount">@Model.VoteCount</span>Vote
+                </p>
+            }
+
+
+        </td>
+        <td style="width: 10%;">
+
+            @if (Model.CommentCount > 1)
+            {
+                <p><span class="badge badge-AnswersCount">@Model.CommentCount</span> Comments</p>
+            }
+            else
+            {
+                <p><span class="badge badge-AnswersCount">@Model.CommentCount</span> Comment</p>
+            }
+
+
+
+        </td>
+
+        <td style="width: 10%;">
+            @if (Model.ViewCount > 1)
+            {
+                <p><span class="badge badge-ViewsCount">@Model.ViewCount</span> Views</p>
+            }
+            else
+            {
+                <p><span class="badge badge-ViewsCount">@Model.ViewCount</span> View</p>
+            }
+
+        </td>
+
+        <td style="width: 40%;">
+            <a href="/Announcement/AnnouncementByAdminView/@Model.AdminAnnouncementID">
+                <b style="font-size:16px">@Model.AdminAnnounceTopic</b>
+            </a> <br />
+            <span class="badge badge-categoryAnnouncement" style="font-size:16px; color:#fff;">@Model.Category</span>
+        </td>
+        <td style="width: 15%;">
+            <p style="font-size">By&nbsp;<span class="badge badge-primary">@Model.AdminUsers.AdminName</span></p>
+        </td>
+        <td class="text-muted" style="width: 15%;">@Model.AnnouncementDateTime</td>
+    </tr>
+
+
+
+
+<!-- Delete Confirmation Modal -->
+
+<div class="modal fade" id="deleteAnnouncementModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your answer?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).on('click', '[data-toggle="modal"][data-target="#deleteQuestionModal"]', function () {
+        var questionId = $(this).data('question-id');
+
+
+        if (questionId) {
+            var deleteUrl = '/Questions/DeleteQuestion/' + questionId;
+            $('#confirmDeleteBtn').attr('href', deleteUrl);
+        }
+    });
+
+</script>

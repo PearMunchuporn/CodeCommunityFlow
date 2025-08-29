@@ -1,0 +1,48 @@
+﻿@model List<CodeCommunityFlow.ViewModels.AdminUserViewModels>
+@{
+    ViewBag.Title = "Admin Users";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+@if (TempData["SuccessChangePassword"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessChangePassword"]</div>
+}
+<h4 class="mt-4">Admin Users</h4>
+<br />
+<a href="/Admin/AdminUsers/AddAdmin" class="btn btn-primary">Add Admin</a>
+
+
+<table class="table table-responsive mt-4">
+
+    <tr>
+        <th>Admin ID</th>
+        <th>Admin Name</th>
+
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.AdminID</td>
+            <td>@item.AdminName </td>
+
+
+        </tr>
+    }
+
+
+</table>
+
+<script>
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+</script>

@@ -1,0 +1,1007 @@
+﻿@model CodeCommunityFlow.SelectList.SelectReportReason
+@{
+    ViewBag.Title = "View Question";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*TempData when report successfully.*@
+
+@if (TempData["SuccessReport"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessReport"]</div>
+}
+
+@if (TempData["SuccessDeleteAnswer"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessDeleteAnswer"]</div>
+}
+
+@if (TempData["SuccessThankTo"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessThankTo"]</div>
+}
+@* Whole container *@
+
+<div class="container mt-5">
+
+    <div class="col-xl-12 question-container">
+        @* Question Section *@
+        @* You Are Not Owner The Question and You haven't logged in*@
+
+
+
+        @if (Convert.ToInt32(Session["CurrentUserID"]) != Model.UserID)
+        {
+            @* Topic's Question *@
+            <div class="col-md-12 border bg-Question">
+                <h3 class="mb-3">@Model.QuestionName</h3>
+            </div>
+            <br />
+            @* Question's Content Part *@
+            <div class="col-md-12 border bg-Question p-3">
+                @* Top of Question's Content Status *@
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-3 w-100 parents-of-vote">
+                    @* Left Side Question's status Consist of Category, UserName, UserImage, vote System *@
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <span class="badge badge-category">@Model.Categories.CatagoryName</span>&nbsp;&nbsp;
+                        <span>
+                            @* I am Onwer the Question *@
+
+                            @if (Convert.ToInt32(Session["CurrentUserID"]) == Model.Users.UserID)
+                            {
+                            <a href="@Url.Action("MyProfile", "Account")">By You</a>
+
+                            }
+                            @* I am not Onwer the Question *@
+                            else if (Model.Users != null)
+                            {
+                                <a href="@Url.Action("UserDetails", "Account", new { id = Model.Users.UserID })">By @Model.Users.UserName</a>
+                            }
+                            @* This user's account was deleted *@
+                            else
+                            {
+                                <span>By Unknown</span>
+                            }
+                            @**@
+                        </span>&nbsp;&nbsp;
+                        @{
+                            string imageUserAsk;
+                            if (string.IsNullOrEmpty(Model.Users?.ImageUser))
+                            {
+                                imageUserAsk = Url.Content("~/Images/UsersImage/user.png");
+                            }
+                            else
+                            {
+                                imageUserAsk = Url.Content("~/Uploads/ImageUsers/" + Model.Users.ImageUser);
+                            }
+                        }
+                        <img src="@imageUserAsk" width="30" class="rounded ml-1" />&nbsp;&nbsp;&nbsp;
+                        <span class="text-muted">
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                @(Model.Description)
+                            }
+                        </span>&nbsp;&nbsp;
+                        @* --- Vote Question ---*@
+                        @*User has logged in and isn't owner the Question can vote *@
+                        @if (Session["CurrentUserName"] != null && Convert.ToInt32(Session["CurrentUserID"]) != Model.UserID)
+                        {
+                            <img src="~/Images/Buttons Arrow/@(Model.CurrentUserVoteType == 1 ? "green up" : "up").png"
+                                 class="btnUpVoteQuestion" style="cursor:pointer" width="30" height="30"
+                                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+                            <img src="~/Images/Buttons Arrow/@(Model.CurrentUserVoteType == -1 ? "red down" : "down").png"
+                                 class="btnDownVoteQuestion" style="cursor:pointer" width="30" height="30"
+                                 data-questionid="@Model.QuestionID" data-userid="@Model.UserID" />
+                        }
+                    </div>
+                    @*Right Side Question's Status Consist of Datetime, Answer Count, Vote Count *@
+                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                    <span class="text-muted">@Model.QuestionDateTime</span>&nbsp;&nbsp;
+
+
+                    <span class="badge badge-customVoteCount votescount">@Model.VotesCount@(Model.VotesCount > 1? " Votes" : " Vote")</span>&nbsp;&nbsp;
+
+
+
+                    @if (Model.AnswersCount == 0)
+                    {
+                        <span class="text-danger">No Answer</span>
+                    }
+                    else if (Model.AnswersCount > 1)
+                    {
+                        <span class="badge badge-AnswersCount">@Model.Answers.Count Answers</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-AnswersCount">@Model.Answers.Count Answer</span>
+                    }&nbsp;&nbsp;
+
+                    <span class="badge badge-ViewsCount">@Model.ViewsCount@(Model.ViewsCount > 1? " Views" : " View")</span>&nbsp;&nbsp;
+         
+                    @* User has logged in and isn't owner the Question Can Report Question *@
+                    @* User has logged in and isn't owner the Question Can Report Question *@
+
+                    @if (Session["CurrentUserName"] != null && Convert.ToInt32(Session["CurrentUserID"]) != Model.UserID)
+                    {
+                        var dropdownId = $"report-dropdown-{Model.QuestionID}";
+                        var ReportedUserId = Model.UserID;
+                        @* Drop Down Report List Reason  *@
+                        @* Question *@
+                        <div class="dropdown d-inline position-relative">
+                            <button type="button" class="btn btn-sm report-toggle" data-target="#@dropdownId">
+                                <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                            </button>
+                            <div class="dropdown-menu custom-dropdown shadow" id="@dropdownId">
+                                @if (Model.ReportReasonSelectList != null && Model.ReportReasonSelectList.Any())
+                                {
+                                    foreach (var reason in Model.ReportReasonSelectList)
+                                    {
+                                        <a class="dropdown-item report-reason"
+                                           href="@Url.Action("ReportQuestion", "Questions", new { questionId = Model.QuestionID, reasonId = reason.Value, ReportedUserId = ReportedUserId })">
+                                            @reason.Text
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="dropdown-item text-muted">No reasons found</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                </div>
+                @* Question Content Consist of Text and Images *@
+                <hr />
+                @*Code style displaying no indent *@
+
+<pre class="p-3 rounded"><code class="language-html">
+@Html.Raw(System.Net.WebUtility.HtmlEncode(Model.QuestionContent))
+</code></pre>
+
+                @* Image of Question's Content *@
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    var imagePaths = Model.Image.Split(';');
+                    foreach (var path in imagePaths)
+                    {
+                        <div class="my-2 d-flex justify-content-center">
+                            <img src="@path" class="img-fluid rounded" style="max-width: 80%; height: auto;" />
+                        </div>
+                    }
+                }
+            </div>
+            <br />
+            @* --End of Question for who is not owner the Question!-- *@
+            @* --End of Question for who is not owner the Question!-- *@
+        }
+        else
+        {
+            @* Your are Onwer The Question that Can Update or Edit Your Question *@
+            @* Your Question's Content *@
+            <div class="question-display1">
+                @* Question's Topic *@
+                <div class="col-md-12 border bg-Question">
+                    <h3 class="mb-3">@Model.QuestionName</h3>
+                </div>
+                <br />
+                @* Question's' Content *@
+                <div class="col-md-12 border bg-Question p-3">
+                    @* Top of the Question's Status '*@
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                        @* Left Side Question's Status consist of Category, Username, UserImage, Vote *@
+                        <div class="d-flex align-items-center flex-wrap gap-3">
+                            <span class="badge badge-category">@Model.Categories.CatagoryName</span>&nbsp;&nbsp;
+                            <span class="text-info"><a href="/Account/MyProfile">By You</a></span>
+
+                            @{
+                                string imageMEAsk;
+                                if (string.IsNullOrEmpty(Model.Users?.ImageUser))
+                                {
+                                    imageMEAsk = Url.Content("~/Images/UsersImage/user.png");
+                                }
+                                else
+                                {
+                                    imageMEAsk = Url.Content("~/Uploads/ImageUsers/" + Model.Users.ImageUser);
+                                }
+                            }
+
+                            &nbsp;&nbsp;<img src="@imageMEAsk" width="30" class="rounded" />&nbsp;&nbsp;
+                            <span class="text-muted">
+                                @if (!string.IsNullOrEmpty(Model.Description))
+                                {
+                                    @(Model.Description)
+                                }
+                            </span>&nbsp;&nbsp;
+                        </div>
+                        @* Right Side Question Status Consist of Answer Count, View Count, Edit Button *@
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <span class="text-muted">@Model.QuestionDateTime</span>&nbsp;&nbsp;
+
+
+                        <span class="badge badge-customVoteCount votescount">@Model.VotesCount@(Model.VotesCount > 1? " Votes" : " Vote")</span>&nbsp;&nbsp;
+
+
+
+                        @if (Model.AnswersCount == 0)
+                        {
+                            <span class="text-danger">No Answer</span>
+                        }
+                        else if (Model.AnswersCount > 1)
+                        {
+                            <span class="badge badge-AnswersCount">@Model.Answers.Count Answers</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-AnswersCount">@Model.Answers.Count Answer</span>
+                        }&nbsp;&nbsp;
+
+                        <span class="badge badge-ViewsCount">@Model.ViewsCount@(Model.ViewsCount > 1? " Views" : " View")</span>&nbsp;&nbsp;
+                        <a href="/EditQuestion/@Model.QuestionID" class="btn btn-warning btnEditQuestion">Edit</a>&nbsp;&nbsp;
+                        <button class="btn btn-sm btn-danger"
+                                data-toggle="modal" data-target="#deleteQuestionModal"
+                                data-question-id="@Model.QuestionID">
+                            Delete
+                        </button>
+                    </div>
+                    </div>
+
+                    <hr />
+                    @*You Are Owner Question*@
+                    @*You Are Owner Question*@
+                    @* Code Style Displaying No Indent*@
+                    <div class="text-left">
+<pre class="p-3 rounded"><code class="language-html">
+@Html.Raw(System.Net.WebUtility.HtmlEncode(Model.QuestionContent))
+</code></pre>
+                    </div>
+                    @* Image of Question Content *@
+                    @if (!string.IsNullOrEmpty(Model.Image))
+                    {
+                        var imagePaths = Model.Image.Split(';');
+                        foreach (var path in imagePaths)
+                        {
+                            <div class="my-2 d-flex justify-content-center">
+                                <img src="@path" class="img-fluid rounded" style="max-width: 80%; height: auto;" />
+                            </div>
+                        }
+                    }
+
+
+                </div>
+                <br />
+            </div>
+        }
+    </div>
+
+    @* Answers Loop *@
+    @*Answer Contents*@
+
+    @for (int i = 0; i < Model.Answers.Count; i++)
+    {
+        var ans = Model.Answers[i];
+        var isOwner = Convert.ToInt32(Session["CurrentUserID"]) == ans.UserID;
+        var dropdownIdA = $"report-dropdown-{ans.AnswerID}";
+        var answerUser = ans.Users;
+
+        @* Display user profile *@
+        var imageFileNameAns = string.IsNullOrEmpty(answerUser?.ImageUser)
+            ? Url.Content("~/Images/UsersImage/user.png")
+            : Url.Content("~/Uploads/ImageUsers/" + answerUser.ImageUser);
+        <div class="bg-white p-3 bg-answer border">
+
+            <span class="badge badge-warning">Answer #@(i + 1)</span>
+
+            @*Answer Status *@
+            <div class="row">
+
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                    @*span vote*@
+                    &nbsp; &nbsp;
+                     <span class="badge badge-customVoteCount votescount">@ans.VotesCount@(ans.VotesCount > 1? " Votes" : " Vote")</span>
+                    
+                    <br />  &nbsp; &nbsp;
+                    @* --- Vote Answer ---*@
+                    @* Check when user has logged in and is not Answer's onwer can vote and report Answer*@
+                    @if (Session["CurrentUserName"] != null && !isOwner)
+                    {
+                        <img src="~/Images/Buttons Arrow/@(ans.CurrentUserVoteType == 1 ? "green up" : "up").png"
+                             class="btnUpVoteAnswer" style="cursor:pointer" width="30" height="30"
+                             data-answerid="@ans.AnswerID" data-userid="@ans.UserID" />
+
+                        <img src="~/Images/Buttons Arrow/@(ans.CurrentUserVoteType == -1 ? "red down" : "down").png"
+                             class="btnDownVoteAnswer" style="cursor:pointer" width="30" height="30"
+                             data-answerid="@ans.AnswerID" data-userid="@ans.UserID" />
+
+                        <div class="dropdown d-inline position-relative mt-2">
+                            <button type="button" class="btn btn-sm report-toggle" data-target="#@dropdownIdA">
+                                <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                            </button>
+                            @*Report Answer*@
+                            <div class="dropdown-menu custom-dropdown shadow" id="@dropdownIdA">
+                                @if (Model.ReportReasonSelectList != null && Model.ReportReasonSelectList.Any())
+                                {
+                                    foreach (var reason in Model.ReportReasonSelectList)
+                                    {
+                                        <a class="dropdown-item report-reason"
+                                           href="@Url.Action("ReportAnswer", "Answers",new { answerId = ans.AnswerID, reasonId = reason.Value, questionId = Model.QuestionID, reportedUserId = ans.UserID })">
+                                            @reason.Text
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="dropdown-item text-muted">No reasons found</span>
+                                }
+                            </div>
+
+                        </div>
+                    }&nbsp; &nbsp;
+
+                    @{ bool isThanked = ans.isThankedTo.HasValue;
+                    }
+
+                    @if (Model.UserID == Convert.ToInt32(Session["CurrentUserID"]) && Session["CurrentUserName"] != null && Model.UserID != ans.UserID)
+                    {
+
+
+
+
+                        <button class="btn btn-sm @(isThanked ? "btn-success border-success text-white" : "btn-outline-success")"
+                                data-toggle="modal"
+                                data-target="#ThankToModal"
+                                data-user-id="@ans.UserID"
+                                data-answer-id="@ans.AnswerID"
+                                data-username="@ans.Users.UserName"
+                                @(isThanked ? "disabled" : "")>
+                            @if (isThanked)
+                            {
+                                <i class="bi bi-check-circle-fill"></i><span>&nbsp;Thanked</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-hand-thumbs-up"></i><span>&nbsp;Thank to</span>
+                            }
+                        </button>
+                    }
+                    else
+                    {
+                        if (isThanked)
+                        {
+
+                            <button class="btn btn-sm btn-success border-success text-white" disabled>
+                                <i class="bi bi-check-circle-fill"></i><span>&nbsp;Thanked</span>
+                            </button>
+                        }
+                        else
+                        {
+
+                            <span class="d-none"></span>
+                        }
+                    }
+                </div>
+            </div>
+
+            @* Answer Content *@
+            <div class="col-md-12 answer-container">
+                <div class="answer-display">
+<pre class="code-block-no-indent"><code>@Html.Raw(System.Net.WebUtility.HtmlEncode(ans.AnswerText))</code></pre>
+
+                    @* Answer Image *@
+                    @if (!string.IsNullOrEmpty(ans.Image))
+                    {
+                        var imagePaths = ans.Image.Split(';');
+                        foreach (var path in imagePaths)
+                        {
+                            if (!string.IsNullOrWhiteSpace(path))
+                            {
+                                <div class="col-12 d-flex justify-content-center my-3">
+                                    <img src="@path" class="img-fluid rounded" style="max-width: 80%; height: auto;" />
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                @* You are Owner Answer *@
+                @if (isOwner)
+                {
+
+                    <button class="btn btn-warning editbutton">Edit Your Answer</button>
+                    <span>&nbsp;</span>
+                    <button class="btn btn-danger delete-answerbutton"
+                            type="button"
+                            data-toggle="modal"
+                            data-target="#deleteAnswerModal"
+                            data-answer-id="@ans.AnswerID">
+                        Delete Your Answer
+                    </button>
+
+
+
+                    <form class="needs-validation FormShow d-none" action="@Url.Action("EditAnswer", "Answers")"
+                          method="post" enctype="multipart/form-data" novalidate="novalidate">
+                        <div class="form-group form-row">
+                            <div class="col-sm-12">
+
+                                <h4>Update your Answer</h4>
+
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="AnswerID" value="@ans.AnswerID" />
+                                <input type="hidden" name="QuestionID" value="@ans.QuestionID" />
+                                <input type="hidden" name="VotesCount" value="@ans.VotesCount" />
+
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="20" name="AnswerText"
+                                              onclick="modalWarning()" required>@ans.AnswerText</textarea>
+
+                                    @* Show Image and Checkbox to delete image *@
+                                    @if (!string.IsNullOrEmpty(ans.Image))
+                                    {
+                                        var imgPaths = ans.Image.Split(';');
+                                        int imgIndex = 0;
+                                        foreach (var img in imgPaths)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(img))
+                                            {
+                                                var checkboxId = $"delete_{i}_{imgIndex}";
+                                                <div class="my-2 d-flex justify-content-center">
+                                                    <img src="@img" class="img-fluid rounded" style="max-width: 50%; height: auto;" />
+                                                </div>
+                                                <div class="form-check mt-1">
+                                                    <input type="checkbox" class="form-check-input"
+                                                           name="CheckDeleteImage[]" value="@img" id="@checkboxId" />
+                                                    <label class="form-check-label" for="@checkboxId">Delete this image</label>
+                                                </div>
+                                                <hr />
+                                                imgIndex++;
+                                            }
+                                        }
+
+                                        <input type="hidden" name="ImageOld" value="@ans.Image" />
+                                    }
+
+                                    <div class="invalid-feedback d-none" id="invalidMsg">Please enter your answer</div>
+                                    <div class="valid-feedback d-none" id="validMsg">Good job! You are helping someone 😎</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Select files to upload (optional):</label>
+                                    <input type="file" name="Files" multiple class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group d-flex justify-content-start align-items-center mt-2">
+                                <button type="submit" class="btn btn-primary mr-2">Update Answer</button>
+                                @* Prevent form action when cancel edit*@
+                                <button type="button" class="btn btn-danger d-none cancelbutton">Cancel</button>
+                            </div>
+
+
+                            @Html.ValidationSummary()
+                        </div>
+
+                    </form>
+
+                }
+            </div>
+            @* Space below table's table *@
+            <div class="row mt-2 align-items-center">
+                <div class="col-auto">
+                    @if (isOwner)
+                    {
+                        <a href="/Account/MyProfile">By You</a>
+                    }
+                    else if (answerUser != null)
+                    {
+                        <a href="@Url.Action("UserDetails", "Account", new { id = answerUser.UserID })">
+                            By @answerUser.UserName
+                        </a>
+                    }
+                    else
+                    {
+                        <span>By Unknown</span>
+                    }
+
+                    <img src="@imageFileNameAns" width="30" class="rounded ml-2" />&nbsp;&nbsp;
+
+                    <span class="text-muted">@ans.Description</span>
+                </div>
+
+                <div class="col text-right text-muted">
+
+                    @ans.AnswerDateTime
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+
+        <br />
+    }
+
+    @* Add Answer Form *@
+    <div class="col-sm-12 bg-answerform">
+        @if (Session["CurrentUserName"] != null)
+        {
+            //using (Html.BeginForm("AddAnswer", "Questions", FormMethod.Post,
+            //       new { @class = "needs-validation", novalidate = "novalidate", enctype = "multipart/form-data" })) //QuestionsAndAnswers
+
+            <form method="post" action="@Url.Action("AddAnswer", "Answers")" class="needs-validation addAnswer" novalidate enctype="multipart/form-data">
+                <div class="form-group">
+                    <h4>Add your Answer</h4>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="QuestionID" value="@Model.QuestionID" />
+                    <textarea class="form-control"
+                              name="AnswerText"
+                              placeholder="Enter your answer"
+                              onclick="modalWarning()"
+                              required
+                              rows="10"></textarea>
+
+                    <div class="invalid-feedback d-none">Please enter your answer</div>
+                    <div class="valid-feedback d-none">Good job! You're helping someone 😎</div>
+
+                    <br />
+                    <p>Select files to upload (optional):</p>
+                    <input type="file" name="Files" multiple class="form-control" />
+
+                    <button type="submit" class="btn btn-primary mt-3">Add your Answer</button>
+                    @Html.ValidationSummary()
+                </div>
+            </form>
+
+
+        }
+
+    </div>
+</div>
+
+
+<!---Modal Warning Answer-->
+<div class="modal fade" id="ModalWarning">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h4 class="modal-title">Please Read Before Answer the Question</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body mx-auto">
+                <p style="text-indent:1.5rem">We encourage you to help someone with your knowledge and information, but please read about CodeCommunityFlow's rules</p>
+                <p>1. Use polite words and sentences.</p>
+                <p>2. Do not attack someone if you see just a basic issue or fundamental questions. We emphasize to use of appropriate words and sentences; therefore, do not forget the 1st rule, please be polite.</p>
+                <p>3. Please respect each other and maintain a community atmosphere. </p>
+                <p>4. Do not mention to 3rd parties in negative way</p>
+                <p>5. Do not post something related to hate speech to others</p>
+                <p>6. Do not post topics about sexuality or nudity</p>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">OK, I accept the rules</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Answer Confirmation Modal -->
+
+<div class="modal fade" id="deleteAnswerModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your answer?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Delete Question Confirmation Modal-->
+<div class="modal fade" id="deleteQuestionModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete your question?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!---Thank You modal-->
+<div class="modal fade" id="ThankToModal" tabindex="-1" role="dialog" aria-labelledby="ThankModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Thank To User: <span id="ThankToUserName"></span></h5>
+
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="ThankToUserName" />
+                <input type="hidden" id="UserIdThank" />
+                <input type="hidden" id="UserAnswerId" />
+
+            </div>
+            <div class="modal-footer">
+                <button id="ThankToUser" class="btn btn-success">Thanks To</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+    });
+</script>
+
+
+<style>
+    .valid-feedback,
+    .invalid-feedback {
+        display: block;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+
+    .answer-container pre {
+        text-align: left;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+
+
+
+    .code-block-no-indent code {
+        background: none;
+        padding: 0;
+        margin: 0;
+        border: none;
+        display: block;
+    }
+</style>
+
+
+
+
+@**Highlight Code*@
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+}
+
+<script>
+
+    $(document).ready(function () {
+
+
+        const forms = document.querySelectorAll(".needs-validation");
+
+        forms.forEach(function (form) {
+            const textarea = form.querySelector("textarea[name='AnswerText']");
+            const invalidMsg = form.querySelector(".invalid-feedback");
+            const validMsg = form.querySelector(".valid-feedback");
+
+            form.addEventListener("submit", function (e) {
+                console.log("Submit triggered...");
+                if (!textarea.value.trim()) {
+                    e.preventDefault();
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    invalidMsg.classList.remove("d-none");
+                    validMsg.classList.add("d-none");
+                    console.log("Empty textarea - showing error");
+                }
+            });
+
+            textarea.addEventListener("input", function () {
+                if (textarea.value.trim()) {
+                    textarea.classList.add("is-valid");
+                    textarea.classList.remove("is-invalid");
+                    validMsg.classList.remove("d-none");
+                    invalidMsg.classList.add("d-none");
+                    console.log("Valid input typed");
+                } else {
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    invalidMsg.classList.remove("d-none");
+                    validMsg.classList.add("d-none");
+                    console.log("Input cleared - showing error");
+                }
+            });
+        });
+        // Confirm Delete
+
+        $(document).on('click', '[data-toggle="modal"][data-target="#deleteAnswerModal"]', function () {
+            var ansId = $(this).data('answer-id');
+            console.log("Answer ID:", ansId);
+
+            if (ansId) {
+                var deleteUrl = '/Answers/DeleteAnswer/' + ansId;
+                $('#confirmDeleteBtn').attr('href', deleteUrl);
+            }
+        });
+        // Vote Answer - Up
+        $(".btnUpVoteAnswer").click(function () {
+            var UpBtn = $(this);
+            var DownBtn = UpBtn.parent().find(".btnDownVoteAnswer");
+            var voteSpan = UpBtn.parent().find(".votescount");
+            var userId = UpBtn.data("userid");
+            var value;
+
+            if (UpBtn.attr("src") === "/Images/Buttons Arrow/up.png") {
+                if (DownBtn.attr("src") === "/Images/Buttons Arrow/down.png")
+                    value = 1;
+                else
+                    value = 2;
+
+                $.ajax({
+                    url: "/api/vote/UpdateVoteAnswer?answerid=" + UpBtn.data("answerid") + "&value=" + value + "&userId=" + userId,
+                    type: "POST",
+                    success: function () {
+                        let current = parseInt(voteSpan.text()) || 0;
+                        let newVote = current + value;
+                        voteSpan.text(newVote + " Votes");
+                        UpBtn.attr("src", "/Images/Buttons Arrow/green up.png");
+                        DownBtn.attr("src", "/Images/Buttons Arrow/down.png");
+                    }
+                });
+            }
+        });
+
+        $(".btnDownVoteAnswer").click(function () {
+            var DownBtn = $(this);
+            var UpBtn = DownBtn.parent().find(".btnUpVoteAnswer");
+            var voteSpan = DownBtn.parent().find(".votescount");
+            var userId = DownBtn.data("userid");
+            var value;
+
+            if (DownBtn.attr("src") === "/Images/Buttons Arrow/down.png") {
+                if (UpBtn.attr("src") === "/Images/Buttons Arrow/up.png")
+                    value = -1;
+                else
+                    value = -2;
+
+                $.ajax({
+                    url: "/api/vote/UpdateVoteAnswer?answerid=" + DownBtn.data("answerid") + "&value=" + value + "&userId=" + userId,
+                    type: "POST",
+                    success: function () {
+                        let current = parseInt(voteSpan.text()) || 0;
+                        let newVote = current + value;
+                        voteSpan.text(newVote + " Votes");
+                        DownBtn.attr("src", "/Images/Buttons Arrow/red down.png");
+                        UpBtn.attr("src", "/Images/Buttons Arrow/up.png");
+                    }
+                });
+            }
+        });
+
+
+
+        // Vote Question - Up
+        $(".btnUpVoteQuestion").click(function () {
+            var UpBtn = $(this);
+            var container = UpBtn.closest(".parents-of-vote");
+            var DownBtn = container.find(".btnDownVoteQuestion");
+            var voteCountLabel = container.find(".votecount");
+            var userId = UpBtn.data("userid");
+            var value;
+
+            if (UpBtn.attr("src") === "/Images/Buttons Arrow/up.png") {
+                if (DownBtn.attr("src") === "/Images/Buttons Arrow/down.png")
+                    value = 1;
+                else
+                    value = 2;
+
+                $.ajax({
+                    url: "/api/vote/UpdateVoteQuestion?questionid=" + UpBtn.data("questionid") + "&value=" + value + "&userId=" + userId,
+                    type: "POST",
+                    success: function () {
+                        var currentCount = parseInt(voteCountLabel.text().replace(/\D/g, '')) || 0;
+                        var newCount = currentCount + value;
+                        voteCountLabel.text(newCount + " Votes"); // ✅ แสดง 3 Votes
+                        UpBtn.attr("src", "/Images/Buttons Arrow/green up.png");
+                        DownBtn.attr("src", "/Images/Buttons Arrow/down.png");
+                    },
+                    error: function (xhr) {
+                        alert("Error: Unable to upvote. " + xhr.statusText);
+                    }
+                });
+            }
+        });
+
+        // Vote Question - Down
+        $(".btnDownVoteQuestion").click(function () {
+            var DownBtn = $(this);
+            var UpBtn = DownBtn.closest(".parents-of-vote").find(".btnUpVoteQuestion");
+            var voteCountLabel = DownBtn.closest(".parents-of-vote").find(".votecount");
+            var userId = UpBtn.data("userid");
+            var value;
+
+            if (DownBtn.attr("src") === "/Images/Buttons Arrow/down.png") {
+                if (UpBtn.attr("src") === "/Images/Buttons Arrow/up.png")
+                    value = -1;
+                else
+                    value = -2;
+
+                $.ajax({
+                    url: "/api/vote/UpdateVoteQuestion?questionid=" + UpBtn.data("questionid") + "&value=" + value + "&userId=" + userId,
+                    type: "POST",
+                    success: function () {
+                        var currentCount = parseInt(voteCountLabel.text().replace(/\D/g, '')) || 0;
+                        var newCount = currentCount + value;
+                        voteCountLabel.text(newCount + " Votes"); // ✅ แสดง 1 Votes
+                        DownBtn.attr("src", "/Images/Buttons Arrow/red down.png");
+                        UpBtn.attr("src", "/Images/Buttons Arrow/up.png");
+                    }
+                });
+            }
+        });
+
+    }); // end document.ready
+
+
+    // Edit Answer
+    ;
+    $(document).on("click", ".editbutton", function () {
+        var container = $(this).closest(".answer-container");
+
+        container.find(".FormShow").removeClass("d-none").show();
+        container.find(".answer-display").hide();
+        container.find(".editbutton").hide();
+        container.find(".delete-answerbutton").hide();
+        container.find(".cancelbutton").removeClass("d-none").show();
+        $(".bg-answerform .addAnswer").addClass("d-none").hide();
+    });
+
+    // Edit Question
+  
+    //Cancel
+    $(document).on("click", ".cancelbutton", function () {
+        var container = $(this).closest(".answer-container");
+
+        container.find(".FormShow").addClass("d-none").hide();
+        container.find(".answer-display").show();
+        container.find(".editbutton").show();
+        container.find(".delete-answerbutton").show();
+        container.find(".cancelbutton").addClass("d-none").hide();
+    });
+
+    // Show modal once
+    var modalShown = false;
+    window.modalWarning = function () {
+        if (!modalShown) {
+            $('#ModalWarning').modal('show');
+            modalShown = true;
+        }
+    };
+
+    $(document).ready(function () {
+
+        $('.report-toggle').on('click', function (e) {
+            e.preventDefault()
+            e.stopPropagation()
+
+            var targetSelector = $(this).data('target')
+            var $targetDropdown = $(targetSelector)
+
+            $('.custom-dropdown').not($targetDropdown).hide(); // Hide all others
+            $targetDropdown.toggle(); // Toggle current
+        });
+
+        // Click outside to close
+        $(document).on('click', function () {
+            $('.custom-dropdown').hide()
+        });
+
+        // Prevent dropdown click from closing itself
+        $('.custom-dropdown').on('click', function (e) {
+            e.stopPropagation()
+        });
+
+        // Report reason click
+        $(document).on('click', '.report-reason', function () {
+            var reasonId = $(this).data('reason-id');
+            console.log(("You selected reason ID: " + reasonId))
+            $('.custom-dropdown').hide();
+        });
+    });
+
+    $('[data-target="#ThankToModal"]').off('click').on('click', function () {
+        var userId = $(this).data('user-id');
+        var userName = $(this).data('username');
+        var answerId = $(this).data("answer-id")
+        $clickedButton = $(this);
+        $('#UserIdThank').val(userId);
+        $('#ThankToUserName').val(userName);
+        $("#UserAnswerId").val(answerId);
+        $('#ThankToUserName').text(userName);
+
+    });
+
+    $("#ThankToUser").click(function () {
+        const userId = $("#UserIdThank").val();
+        const userName = $("#ThankToUserName").val();
+        const answerId = $("#UserAnswerId").val()
+        console.log("Thank to userID = ", userId,"username = " ,userName, "answer id = ", answerId)
+
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("ThankToThisAnswer", "Answers")',
+        data: {
+            UserID: userId,
+            AnswerID: answerId
+
+        },
+        success: function () {
+            $('#ThankToModal').modal('hide');
+            if ($clickedButton) {
+                $clickedButton
+                    .removeClass("btn-outline-success")
+                    .addClass("btn-success border-success text-white")
+                    .html('<i class="bi bi-check-circle-fill"> </i> Thanked'); // ✅ Font Awesome check icon
+            }
+            setTimeout(function () {
+                location.reload(); // ✅ Full page refresh to show updated data
+            }, 10);
+        },
+        error: function () {
+            alert("An error occurred while sending the message.");
+        }
+    });
+
+ });
+    // Tempdata alert
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+    $(document).on('click', '[data-toggle="modal"][data-target="#deleteQuestionModal"]', function () {
+        var questionId = $(this).data('question-id');
+        $('#deleteForm').attr('action', '/Questions/DeleteQuestion/' + questionId);
+    });
+</script>
+
+}

@@ -1,0 +1,100 @@
+﻿@model CodeCommunityFlow.ViewModels.HomeIndexViewModel
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (TempData["SuccessContact"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessContact"]</div>
+}
+
+@if (TempData["SuccessDeleteQuestion"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessDeleteQuestion"]</div>
+}
+
+
+@if (TempData["SuccessChangePassword"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessChangePassword"]</div>
+}
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="jumbotron">
+            <h1>Learn, Shared and Build!</h1> <br />
+            <h3>Passionate Developers come to CodeCommunityFlow to learn, share their knowledge, and build their careers.</h3>
+            <p class="lead">Join to developer community.</p>
+        </div>
+    </div>
+</div>
+
+@* Partial Annoumcent By Admin *@
+<h3 class="my-4">Announcement By Admin</h3>
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table">
+            @foreach (var announce in Model.AdminAnnouncements)
+            {
+
+                Html.RenderPartial("AnnouncementByAdminPartial", announce);
+            }
+        </table>
+    </div>
+</div>
+
+@* Top 3 Contributor *@
+<div class="row">
+    <div class="col-sm-12">
+        <h4 class="my-3">Top Users Contributor!</h4>
+        <div>
+            @foreach (var user in (List<CodeCommunityFlow.ViewModels.UserViewModel>)ViewBag.TopContributors)
+            {
+                @Html.Partial("TopContributeUser", user)
+            }
+        </div>
+    </div>
+</div>
+
+
+@* Add Question when User has loggedin *@
+<h5 class="my-4">Top Lastest 10 Questions</h5>
+
+@if (Session["CurrentUserName"] != null)
+{
+    <a href="/CreateNewQuestion" class="btn btn-primary">Add New Question</a>
+    <br />
+    <br />
+}
+
+@* Top 10 Lastest Questions *@
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table">
+            @foreach (var questions in Model.Questions)
+            {
+
+                Html.RenderPartial("QuestionHome", questions);
+            }
+
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+    $("a.nav-link[href='/Index']").attr("id", "active");
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+</script>
+

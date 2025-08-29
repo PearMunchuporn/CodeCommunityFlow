@@ -1,0 +1,27 @@
+﻿@model List<CodeCommunityFlow.ViewModels.QuestionViewModel>
+
+<table id="questionsTable" class="table table-bordered table-striped my-custom-table">
+    <thead>
+        <tr>
+        <th>Question No.</th>
+        <th>Question</th>
+        <th>Vote Count</th>
+        <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ 
+            int no = 1;
+        }
+        @foreach (var q in Model)
+        {
+            <tr>
+                <td>@no</td>
+                <td><a href="/Admin/ViewQuestionAndAnswer/ViewByAdmin/@q.QuestionID" class="alink-questionByUserPartial">@q.QuestionName</a></td>
+                <td><span class="badge badge-customVoteCount">@q.VotesCount Votes</span></td>
+                <td>@q.QuestionDateTime</td>
+            </tr>
+            no++;
+        }
+    </tbody>
+</table>

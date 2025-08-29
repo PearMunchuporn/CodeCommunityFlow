@@ -1,0 +1,28 @@
+﻿@model List<CodeCommunityFlow.ViewModels.CategoryViewModel>
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <br />
+        <h5>Categories of Topic</h5>
+        <br />
+        <ul class="list-group list-group-flush">
+            @foreach (var item in Model)
+            {
+                <li class="list-group-item list-group-item-action">@item.CategoryID.&nbsp; @item.CatagoryName </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+
+
+    $("a[href='/Categories']").attr("id", "active");
+</script>

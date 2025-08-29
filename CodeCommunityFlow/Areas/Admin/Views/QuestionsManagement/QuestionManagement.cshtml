@@ -1,0 +1,169 @@
+﻿@model List<CodeCommunityFlow.ViewModels.QuestionViewModel>
+@{
+    ViewBag.Title = "Questions Management";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+@if (TempData["SuccessDeleteQuestion"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessDeleteQuestion"]</div>
+}
+
+<h4 class="my-4">All Questions</h4>
+
+<table id="questionsTable" class="table table-borderless table-hover">
+    <thead>
+        <tr>
+            <th>Votes Count</th>
+            <th>Answers Count</th> 
+            <th>Views Count</th>
+            <th>Questions</th>
+            <th style="width:10%">Posted By</th>
+            <th>Posted Date Time</th>
+            <th>Delete Question</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Model in Model)
+        {
+        <tr>
+            <td><span class="badge badge-customVoteCount">@Model.VotesCount </span>@(Model.VotesCount > 1 ? " Votes" : " Vote")</td>
+            <td><span class="badge badge-AnswersCount">@Model.AnswersCount </span>@(Model.AnswersCount > 1 ? " Answers" : " Answer")</td>
+            <td><span class="badge badge-ViewsCount">@Model.ViewsCount </span>@(Model.ViewsCount > 1 ? " Views" : " View")</td>
+            <td>
+                <a href="/Admin/ViewQuestionAndAnswer/ViewByAdmin/@Model.QuestionID">@Model.QuestionName</a> <br />
+                <span class="badge badge-category">@Model.Categories.CatagoryName</span>
+            </td>
+            <td>
+                @if (Model.Users?.UserID != null)
+                {
+                    <p class="text-name">by @Model.Users.UserName</p>
+                }
+                else
+                {
+                    <p class="text-name">by Deleted User</p>
+                }
+
+
+            </td>
+            <td class="text-muted">@Model.QuestionDateTime</td>
+
+            <td>
+
+                <button class="btn btn-sm btn-danger"
+                        data-toggle="modal" data-target="#deleteQuestionModal"
+                        data-question-id="@Model.QuestionID">
+                    Delete
+                </button>
+
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<!-- Delete Confirmation Modal -->
+
+<div class="modal fade" id="deleteQuestionModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this question?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Base style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        margin: 0;
+        border-radius: 0.25rem !important;
+        color: #007bff !important;
+        background: transparent !important;
+        border: 1px solid transparent;
+    }
+
+        /* Current page */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff !important;
+            color: #fff !important;
+            border: 1px solid transparent;
+        }
+
+        /* Hover state override */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            background-color: #e2e6ea !important; /* Light gray */
+            color: #007bff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: none !important;
+        }
+</style>
+
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables core -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        var table = $('#questionsTable').DataTable({
+            paging: true,
+            ordering: true,
+            pagingType: "full_numbers",
+            info: true,
+            columnDefs: [
+                { orderable: false, targets: [5] }
+            ],
+            drawCallback: function () {
+                // Rebind modal trigger on redraw
+                $('[data-toggle="modal"]').off('click').on('click', function () {
+                    var QuestionId = $(this).data('question-id');
+                    var deleteUrl = '/Admin/QuestionsManagement/DeleteQuestionByAdmin/' + QuestionId;
+                    $('#confirmDeleteBtn').attr('href', deleteUrl);
+                    $('#deleteQuestionModal').modal('show');
+                });
+            }
+        });
+
+        // Confirm delete button
+        $(document).on('click', '#confirmDeleteBtn', function (e) {
+            e.preventDefault();
+            var deleteUrl = $(this).attr('href');
+            if (deleteUrl) {
+                window.location.href = deleteUrl;
+            }
+        });
+    });
+
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+</script>
+

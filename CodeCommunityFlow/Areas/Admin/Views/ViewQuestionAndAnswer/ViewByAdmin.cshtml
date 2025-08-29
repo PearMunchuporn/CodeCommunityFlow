@@ -1,0 +1,211 @@
+﻿@model CodeCommunityFlow.ViewModels.QuestionViewModel
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+
+
+<div class="container mt-5">
+    <div class="col-xl-12 question-container">
+        @* Question Section *@
+        @* You Are Not Owner The Question and You haven't logged in*@
+         @* Topic's Question *@
+            <div class="col-md-12 border bg-Question">
+                <h3 class="mb-3">@Model.QuestionName</h3>
+            </div>
+            <br />
+            @* Question's Content Part *@
+            <div class="col-md-12 border bg-Question p-3">
+                @* Top of Question's Content Status *@
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-3 w-100 parents-of-vote">
+                    @* Right Side Question's status Consist of Category, UserName, UserImage, vote System *@
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <span class="badge badge-category">@Model.Categories.CatagoryName</span>&nbsp;&nbsp;
+                        <span>
+                            @* I am Onwer the Question *@
+
+
+                            @* I am not Onwer the Question *@
+                            @if (Model.Users != null)
+                            {
+                                <a href="@Url.Action("UserViewProfile", "UserViewProfile", new { id = Model.Users.UserID })">By @Model.Users.UserName</a>
+                            }
+                            @* This user's account was deleted *@
+                            else
+                            {
+                                <span>By Unknown</span>
+                            }
+                            @**@
+                        </span>&nbsp;&nbsp;
+                        @{
+                            string imageUserAsk;
+                            if (string.IsNullOrEmpty(Model.Users?.ImageUser))
+                            {
+                                imageUserAsk = Url.Content("~/Images/UsersImage/user.png");
+                            }
+                            else
+                            {
+                                imageUserAsk = Url.Content("~/Uploads/ImageUsers/" + Model.Users.ImageUser);
+                            }
+                        }
+                        <img src="@imageUserAsk" width="30" class="rounded" />&nbsp;&nbsp;
+
+                        @*User has logged in and isn't owner the Question can vote *@
+                        <span class="text-muted">
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                @(Model.Description)
+                            }
+                        </span>&nbsp;&nbsp;
+                    </div>
+                    @*Left Side Question's Status Consist of Datetime, Answer Count, Vote Count *@
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <span class="text-muted">@Model.QuestionDateTime</span>&nbsp;&nbsp;
+                    <span class="badge badge-customVoteCount">@Model.VotesCount Votes</span>&nbsp;&nbsp;
+
+
+                    @if (Model.AnswersCount == 0)
+                    {
+                        <span class="text-danger">No Answer</span>
+                    }
+                    else if (Model.AnswersCount > 1)
+                    {
+                        <span class="badge badge-AnswersCount">@Model.Answers.Count Answers</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-AnswersCount">@Model.Answers.Count Answer</span>
+                    }&nbsp;&nbsp;
+
+                    @* User has logged in and isn't owner the Question Can Report Question *@
+                    @* User has logged in and isn't owner the Question Can Report Question *@
+                    <span class="badge badge-ViewsCount votescount">@Model.ViewsCount@(Model.ViewsCount > 1? " Views" : " View")</span>&nbsp;&nbsp;
+
+                </div>
+                </div>
+                @* Question Content Consist of Text and Images *@
+                <hr />
+                @*Code style displaying no indent *@
+
+<pre class="p-3 rounded"><code class="language-html">
+@Html.Raw(System.Net.WebUtility.HtmlEncode(Model.QuestionContent))
+</code></pre>
+
+                @* Image of Question's Content *@
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    var imagePaths = Model.Image.Split(';');
+                    foreach (var path in imagePaths)
+                    {
+                        <div class="my-2 d-flex justify-content-center">
+                            <img src="@path" class="img-fluid rounded" style="max-width: 80%; height: auto;" />
+                        </div>
+                    }
+                }
+            </div>
+            <br />
+      
+        
+
+    </div>
+
+    @* Answers Loop *@
+    @*Answer Contents*@
+
+    @for (int i = 0; i < Model.Answers.Count; i++)
+    {
+        var ans = Model.Answers[i];
+        var isOwner = Convert.ToInt32(Session["CurrentUserID"]) == ans.UserID;
+        var dropdownIdA = $"report-dropdown-{ans.AnswerID}";
+        var answerUser = ans.Users;
+
+        @* Display user profile *@
+        var imageFileNameAns = string.IsNullOrEmpty(answerUser?.ImageUser)
+            ? Url.Content("~/Images/UsersImage/user.png")
+            : Url.Content("~/Uploads/ImageUsers/" + answerUser.ImageUser);
+        <div class="bg-white p-3 bg-answer border">
+
+            <span class="badge badge-warning">Answer #@(i + 1)</span>
+
+            @*Answer Status *@
+            <div class="row">
+
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                    @*span vote*@
+                    &nbsp; &nbsp; <span class="badge badge-customVoteCount votescount">@ans.VotesCount Votes</span><br />  &nbsp; &nbsp;
+
+
+                </div>
+            </div>
+            <div class="col-md-12 answer-container">
+                <div class="answer-display">
+                    <pre class="code-block-no-indent"><code>@Html.Raw(System.Net.WebUtility.HtmlEncode(ans.AnswerText))</code></pre>
+
+                    @* Answer Image *@
+                    @if (!string.IsNullOrEmpty(ans.Image))
+                    {
+                        var imagePaths = ans.Image.Split(';');
+                        foreach (var path in imagePaths)
+                        {
+                            if (!string.IsNullOrWhiteSpace(path))
+                            {
+                                <div class="col-12 d-flex justify-content-center my-3">
+                                    <img src="@path" class="img-fluid rounded" style="max-width: 80%; height: auto;" />
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+
+            </div>
+
+            <div class="row mt-2 align-items-center">
+                <div class="col-auto">
+
+                    @if (answerUser != null)
+                    {
+                        <a href="@Url.Action("UserViewProfile", "UserViewProfile", new { id = answerUser.UserID })">
+                            By @answerUser.UserName
+                        </a>
+                    }
+                    else
+                    {
+                        <span>By Unknown</span>
+                    }
+
+                    <img src="@imageFileNameAns" width="30" class="rounded ml-2" />
+                    <span class="text-muted">
+                        @if (!string.IsNullOrEmpty(Model.Answers[i].Description))
+                        {
+                            @(Model.Answers[i].Description)
+                        }
+                    </span>&nbsp;&nbsp;
+                </div>
+                <div class="col text-right text-muted">
+                    @ans.AnswerDateTime
+                </div>
+            </div>
+        </div>
+
+
+
+        <br />
+    }
+
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+    });
+</script>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+}

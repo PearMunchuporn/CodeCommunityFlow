@@ -1,0 +1,124 @@
+﻿@model CodeCommunityFlow.ViewModels.AdminAnnouncementViewModels
+@{
+    ViewBag.Title = "EditAnnouncement";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+
+<h4 class="my-4">Edit your announcement</h4>
+<div class="container mt-5">
+
+  
+
+    <div class="col-md-12 border bg-Question">
+        <label>Topic Question</label>
+        <form action="@Url.Action("EditAnnouncement", "AdminAnnouncement")" method="post" class="needs-validation" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input class="col-md-12 form-control" type="text" name="AdminAnnounceTopic" value="@Model.AdminAnnounceTopic" placeholder="Edit you topic of announcement" />
+
+            <div class="invalid-feedback d-none" id="invalidMsg">Please add the topic of announcement</div>
+
+            <br />
+            <span class="badge badge-category">Admin Announcement</span>
+          
+            <input type="hidden" value="@Model.AdminID" name="UserID" />
+            <input type="hidden" value="@Model.AdminAnnouncementID" name="AdminAnnouncementID" />
+            
+
+          
+            <br />
+            <label>Edit your announcement content</label>
+            <div class="form-group">
+                <textarea class="form-control" rows="10" value="@Model.AdminAnnounceContent" placeholder="Enter your announcement content"
+                          name="AdminAnnounceContent">@Model.AdminAnnounceContent</textarea>
+
+            </div>
+            <br />
+
+            @if (!string.IsNullOrEmpty(Model.ImageContent))
+            {
+                var imagePaths = Model.ImageContent.Split(';');
+
+                int imgIndex = 0;
+                var checkboxId = $"delete_{imgIndex}";
+                foreach (var path in imagePaths)
+                {
+                    <div class="my-2 d-flex justify-content-center">
+                        <img src="@path" class="img-fluid" style="max-width: 50%; height: auto;" />
+                    </div>
+                    <div class="form-check mt-1">
+                        <input type="checkbox" class="form-check-input" name="CheckDeleteImage[]" value="@path" id="@checkboxId" />
+                        <label class="form-check-label" for="@checkboxId">Delete this image</label>
+                    </div>
+                    imgIndex++;
+                }
+            }
+
+
+            <div class="form-group">
+
+                <label>Select files to upload (optional):</label>
+                <input type="file" name="Files" multiple class="form-control" />
+                <input type="hidden" name="ImgOld" value="@Model.ImageContent" />
+            </div>
+            <br />
+            <button class="btn btn-warning" type="submit">Update Announcement</button>
+            <a class="btn btn-danger" href="/Admin/AdminAnnouncement/ViewAnnouncement/@Model.AdminAnnouncementID">Cancel</a>
+            @Html.ValidationSummary()
+        </form>
+    </div>
+</div>
+
+<style>
+    .valid-feedback,
+    .invalid-feedback {
+        display: block;
+        margin-top: 5px;
+        font-weight: 600;
+        color: red;
+    }
+</style>
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const forms = document.querySelectorAll(".needs-validation");
+
+        forms.forEach(form => {
+            const textarea = form.querySelector("input[name='QuestionName']");
+            const invalidMsg = form.querySelector("#invalidMsg");
+            const validMsg = form.querySelector("#validMsg");
+
+            // Submit validation
+            form.addEventListener("submit", function (e) {
+                if (!textarea.value.trim()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                }
+            });
+
+            // Real-time validation
+            textarea.addEventListener("input", function () {
+                if (textarea.value.trim().length > 0) {
+                    textarea.classList.add("is-valid");
+                    textarea.classList.remove("is-invalid");
+                    if (validMsg) validMsg.classList.remove("d-none");
+                    if (invalidMsg) invalidMsg.classList.add("d-none");
+                } else {
+                    textarea.classList.add("is-invalid");
+                    textarea.classList.remove("is-valid");
+                    if (invalidMsg) invalidMsg.classList.remove("d-none");
+                    if (validMsg) validMsg.classList.add("d-none");
+                }
+            });
+        });
+    });
+
+
+</script>

@@ -1,0 +1,269 @@
+﻿body {
+}
+
+::selection {
+    background-color:lightblue;
+    color:black;
+  
+}
+.alink-top3user {
+    color: #000 !important;
+    display: inline-block;
+}
+
+.alink-answerByUserPartial {
+    color: #eb0089;
+    font-weight:400;
+}
+
+.alink-answerByUserPartial:hover {
+        color: #cc19e0;
+        font-weight: 400;
+}
+
+#active {
+    background-color: #ddd;
+}
+
+.navbar li:hover {
+    background-color: lightgray;
+    color: white;
+}
+
+.btn-contact {
+    color: white;
+    background-color: deepskyblue;
+}
+
+.btn-contact:hover {
+        color: white;
+        background-color: darkblue;
+}
+
+.dropdown-menu li.hover {
+}
+
+.hidden {
+    display: none;
+}
+
+.badge-customVoteCount {
+    background-color: lightgreen;
+}
+
+.badge-AnswersCount {
+    background-color: orange;
+}
+
+.badge-ViewsCount {
+    background-color: skyblue;
+}
+.badge-know {
+background-color:navy;
+}
+.badge-category {
+    background-color: plum;
+}
+.badge-score {
+    background-color:lightcoral;
+}
+
+.badge-warnUser {
+    background-color:gold;
+}
+
+.badge-reimburseScore{
+    background-color:hotpink;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.badge-deleted {
+    background-color: lightcoral;
+}
+.badge-answer {
+    background-color:greenyellow;
+}
+.badge-question {
+    background-color:aqua;
+}
+.badge-false {
+    background-color: red;
+}
+.badge-reportReason {
+    background-color:yellow;
+}
+.badge-plusScore {
+    background-color:springgreen;
+}
+
+.badge-MinusScore {
+    background-color: #ff5757;
+}
+.badge-noyetThanked {
+    background-color:orange;
+}
+.badge-thanked {
+    background-color:lime;
+}
+.badge-true {
+    background-color:limegreen;
+}
+.badge-comment {
+    background-color: hotpink;
+}
+.badge-categoryAnnouncement {
+    background-color:orangered;
+}
+.bg-announement {
+    background-color: #fff7ae;
+    border: red 2px solid !important;
+    border-radius: 5px;
+}
+.logos__marquee {
+    display: flex;
+    overflow-x: hidden;
+    user-select: none;
+    mask-image: linear-gradient( to right, hsl(0 0% 0% / 0), hsl(0 0% 0% / 1) 5%, hsl(0 0% 0% / 1) 5%, hsl(0 0% 0% / 1) 80%, hsl(0 0% 0% / 0) );
+}
+
+
+.marquee__logos {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 1rem;
+    min-width: 100%;
+    animation: loop 40s linear infinite;
+}
+
+    .marquee__logos img {
+        display: block;
+        margin-inline: 2rem;
+    }
+
+@keyframes loop {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+
+.field-validation-error {
+    color: red;
+}
+
+ul {
+    list-style: none;
+}
+
+.validation-summary-errors {
+    color: red;
+    text-decoration: none;
+}
+
+.feedback-message {
+    color: red;
+    font-size: 0.875em;
+    display: none;
+}
+
+.match {
+    color: green;
+    display: block;
+}
+
+.mismatch {
+    color: red;
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+.bg-AnnouncementContainer {
+
+}
+.bg-Question {
+    background-color: white;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+}
+
+.bg-Announce {
+
+    padding-top: 20px;
+    padding-bottom: 10px;
+    border: red 2px solid!important;
+    border-radius: 10px;
+}
+.bg-AnnounceConent {
+    border-radius: 10px;
+    border: red 2px solid !important;
+}
+.bg-card {
+    border: none;
+    background-color: palegoldenrod;
+}
+
+.bg-answer {
+    background-color: white;
+    border-radius: 10px;
+    padding-bottom: 5px;
+}
+
+.bg-answerform {
+    background-color: white;
+    padding-bottom: 5px;
+    padding-top: 20px;
+    border-radius: 10px;
+}
+
+.bg-contentQ {
+    border-radius: 10px;
+}
+.text-name{
+    color:navy;
+}
+
+.spanAnswercount {
+    height:10px;
+    background-color:lightcoral;
+    padding:10px;
+    text-align:center;
+    
+    
+}
+
+.input-questiontitle{
+    height:50px;
+}
+
+.my-custom-table {
+    background-color: #edfdff; /* Light grey background for whole table */
+}
+
+    .my-custom-table thead {
+        background-color: #003940; /* Dark header */
+        color: white;
+    }
+
+    .my-custom-table tbody tr:nth-child(even) {
+        background-color: #fff; /* Stripe for even rows */
+    }
+
+    .my-custom-table tbody tr:hover {
+        background-color: #e3fdff; /* Highlight on hover */
+    }
+
+    .my-custom-table td, .my-custom-table th {
+        border: 1px solid #87f2ff;
+    }

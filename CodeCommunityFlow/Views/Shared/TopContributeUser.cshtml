@@ -1,0 +1,22 @@
+﻿@model CodeCommunityFlow.ViewModels.UserViewModel
+
+@{
+    string imageUrl;
+    if (string.IsNullOrEmpty(Model.ImageUser))
+    {
+        imageUrl = Url.Content("~/Images/UsersImage/user.png");
+    }
+    else
+    {
+        imageUrl = Url.Content("~/Uploads/ImageUsers/" + Model.ImageUser);
+    }
+}
+<a class="alink-top3user" href="/UserProfile/@Model.UserID">
+    <div class="card me-2 mb-2" style="width: 10rem; display: inline-block; vertical-align: top;">
+        <img src="@imageUrl" class="card-img-top rounded" alt="User Image" style="height: 100px; object-fit: cover;">
+        <div class="card-body text-center">
+            <strong>@Model.UserName</strong>
+            <p class="font-weight-bolder">Score: @Model.Score</p>
+        </div>
+    </div>
+</a>

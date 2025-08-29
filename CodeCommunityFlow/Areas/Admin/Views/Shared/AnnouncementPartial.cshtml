@@ -1,0 +1,73 @@
+﻿@model CodeCommunityFlow.ViewModels.AdminAnnouncementViewModels
+
+
+<tr>
+    <td style="width: 5%;"><span class="badge badge-customVoteCount">@Model.VoteCount</span>@(Model.VoteCount > 1 ? " Votes" : " Vote")</td>
+    <td style="width: 5%;"><span class="badge badge-AnswersCount">@Model.CommentCount</span>@(Model.CommentCount > 1 ? " Commments" : " Comment")</td>
+    <td style="width: 5%;"><span class="badge badge-ViewsCount">@Model.ViewCount</span> @(Model.ViewCount > 1 ? " Views" : " Views")</td>
+    <td style="width: 40%;">
+        <a href="/Admin/AdminAnnouncement/ViewAnnouncement/@Model.AdminAnnouncementID">@Model.AdminAnnounceTopic</a> <br />
+        <span class="badge badge-category">@Model.Category</span>
+    </td>
+    <td style="width: 10%;">
+        @if (Convert.ToInt32(Session["CurrentAdminID"]) != Model.AdminID)
+        {
+            <p class="text-name" style="font-size:18px;">By&nbsp;<span class="badge badge-primary">@Model.AdminUsers.AdminName</span></p>
+        }
+        else
+        {
+            <p class="text-name" style="font-size:18px;">By&nbsp;<span class="badge badge-primary">You</span></p>
+        }
+    </td>
+    <td class="text-muted" style="width: 10%;">@Model.AnnouncementDateTime</td>
+    <td style="width: 25%;">
+        @if (Convert.ToInt32(Session["CurrentAdminID"]) == Model.AdminID)
+        {
+            <a href="/Admin/AdminAnnouncement/EditAnnouncement/@Model.AdminAnnouncementID" class="btn btn-warning">Edit</a><span>&nbsp;&nbsp;</span>
+            <button class="btn btn-danger"
+                    type="button"
+                    data-toggle="modal"
+                    data-target="#deleteAnnounceModal"
+                    data-announce-id="@Model.AdminAnnouncementID">
+                Delete
+            </button>
+        }
+    </td>
+
+
+</tr>
+
+
+
+<!-- Delete Confirmation Modal -->
+
+<div class="modal fade" id="deleteAnnounceModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your announcement?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).on('click', '[data-toggle="modal"][data-target="#deleteAnnounceModal"]', function () {
+        var announceId = $(this).data('announce-id');
+        var deleteUrl = '/Admin/AdminAnnouncement/DeleteAnnouncement/' + announceId;
+            $('#confirmDeleteBtn').attr('href', deleteUrl);
+        
+    });
+
+</script>

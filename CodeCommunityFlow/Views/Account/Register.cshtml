@@ -1,0 +1,58 @@
+﻿@model CodeCommunityFlow.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h3>Register</h3>
+    <br />
+    <form id="registerForm" method="post" asp-action="Register" asp-controller="Account" novalidate>
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="Name">User Name</label>
+            <input type="text" class="form-control" id="Name" name="UserName" placeholder="Enter your name" required />
+            <div class="invalid-feedback">Username is required.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="Email">Email</label>
+            <input type="email" class="form-control" id="txtEmail" name="Email" placeholder="Enter your email" required />
+            <div class="invalid-feedback" id="email-feedback">Valid email is required.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="ppassword">Password</label>
+            <input type="password" class="form-control" id="ppassword" name="Password" placeholder="Enter password" required />
+            <div class="invalid-feedback">Password is required.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="pconfirmpassword">Confirm Password</label>
+            <input type="password" class="form-control" id="pconfirmpassword" name="PasswordConfirm" placeholder="Confirm password" required />
+            <div class="invalid-feedback" id="confirm-feedback">Passwords do not match.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+</div>
+
+<style>
+    .valid-feedback,
+    .invalid-feedback {
+        display: none;
+    }
+
+    input.is-valid ~ .valid-feedback,
+    input.is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        $("a[href='/Register']").attr("id", "active");
+    });
+</script>

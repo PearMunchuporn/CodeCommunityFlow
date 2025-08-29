@@ -1,0 +1,147 @@
+﻿@using System.Web.Optimization
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - CodeCommunityFlow</title>
+
+
+
+    <!-- ✅ CSS First -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
+    <!-- ✅ jQuery must come before Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- ✅ DataTables after jQuery -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/site.js"></script>
+    <script src="~/Scripts/register.js"></script>
+    <script src="~/Scripts/login.js"></script>
+    <script src="~/Scripts/nav.js"></script>
+    <script src="~/Scripts/contact.js"></script>
+    @*<script src="~/Scripts/site.js"></script>*@
+
+
+
+    <script src="~/Scripts/jquery.validate.js"></script>
+    @*@Styles.Render("~/Styles/bootstrap")*@
+    @Styles.Render("~/Styles/site")
+    @*@Scripts.Render("~/Scripts/bootstrap")*@
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-sm text-light navbar-light">
+            <a class="navbar-brand" href="/Index">CodeCommunityFlow</a>
+
+
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#CollaspeNavBar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="collaspibleNav">
+                <ul class="navbar-nav active">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/Index">Home</a>
+                    </li>
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/About">About</a>
+                    </li>
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/Categories">Categories</a>
+                    </li>
+
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/AllQuestions">Questions</a>
+                    </li>
+
+
+
+                    @if (Session["CurrentUserName"] == null)
+                    {
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/Login">Login</a>
+                        </li>
+
+
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/Register">Register</a>
+                        </li>
+
+                    }
+
+
+                    @if (Session["CurrentUserName"] != null)
+                    {
+
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/Account/MyProfile">My Profile</a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+
+                                @{
+                                    string imageUser;
+                                    var userImageFile = Session["CurrentUserImage"] as string;
+                                    var imageVersion = Session["CurrentUserImageVersion"]?.ToString() ?? "1";
+
+                                    if (string.IsNullOrEmpty(userImageFile))
+                                    {
+                                        imageUser = Url.Content("~/Images/UsersImage/user.png");
+                                    }
+                                    else
+                                    {
+                                        imageUser = Url.Content("~/Uploads/ImageUsers/" + userImageFile) + "?v=" + imageVersion;
+                                    }
+                                }
+                                <img src="@imageUser" width="auto" height="20" class="rounded" />
+
+
+                                &nbsp;
+                                @Session["CurrentUserName"]
+                            </a>
+
+                            <div class="dropdown-menu bg-light">
+                                <a class="dropdown-item" href="/Logout">Logout</a>
+                                <a class="dropdown-item" href="/MyAccount/ChangeMyProfile">Change your profile</a>
+                                <a class="dropdown-item" href="/MyAccount/ChangeMyPassword">Change your password</a>
+                            </div>
+                        </li>
+                    }
+
+
+                </ul>
+            </div>
+
+            <form class="form-inline" action="/home/search/">
+                <input type="search" class="form-control mr-sm-3" style="width:300px" placeholder="Search..." name="search" />
+                <button class="btn btn-success">Search</button>   &nbsp; &nbsp;
+                <a class="btn btn-contact" id="Contact" href="/ContactUs">Contact</a>
+
+
+            </form>
+        </nav>
+
+        @RenderBody()
+
+        @RenderSection("Scripts", required: false)
+    </div>
+
+</body>
+</html>

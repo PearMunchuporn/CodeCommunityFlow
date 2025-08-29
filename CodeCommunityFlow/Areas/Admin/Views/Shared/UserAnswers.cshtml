@@ -1,0 +1,48 @@
+﻿
+@model List<CodeCommunityFlow.ViewModels.AnswerViewModel>
+
+<table id="answersTable" class="table table-bordered table-striped  my-custom-table">
+    <thead>
+        <tr>
+        <th>Answer No.</th>
+        <th>Answer</th>
+        <th>Votes</th>
+        <th>Thanked To</th>
+        <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+        int no = 1;
+        }
+        @foreach (var answer in Model)
+        {
+
+            <tr>
+                <td>@no</td>
+                <td>
+                    <a href="/Admin/ViewQuestionAndAnswer/ViewByAdmin/@answer.QuestionID" class="alink-answerByUserPartial">
+                        @answer.AnswerText
+                    </a>
+                </td>
+                <td><span class="badge badge-customVoteCount">@answer.VotesCount Votes</span></td>
+                <td>
+                    @if (answer.isThankedTo.HasValue)
+                    {
+                        <p style="font-size:20px"><span class="badge badge-thanked">This Answer Got Thanked</span></p>
+                    }
+                    else
+                    {
+                        <p style="font-size:20px"><span class="badge badge-noyetThanked">Not Yet</span></p>
+                    }
+                    
+                
+                </td>
+                <td>@answer.AnswerDateTime</td>
+              
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

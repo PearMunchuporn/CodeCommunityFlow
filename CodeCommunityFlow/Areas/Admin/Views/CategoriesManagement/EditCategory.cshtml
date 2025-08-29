@@ -1,0 +1,35 @@
+﻿@model CodeCommunityFlow.ViewModels.CategoryViewModel
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+<h4 class="mt-4">Update or Edit Category</h4>
+
+<div class="col-sm-6">
+
+ 
+
+    @using (Html.BeginForm("EditCategory", "CategoriesManagement", new { area = "Admin" }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <b>Category ID:</b> @Model.CategoryID <br />
+
+        @Html.HiddenFor(m => m.CategoryID)
+
+        @Html.LabelFor(m => m.CatagoryName)
+        @Html.TextBoxFor(m => m.CatagoryName, new { @class = "form-control", required = "required" })
+        @Html.ValidationMessageFor(m => m.CatagoryName)
+
+        <br />
+        @Html.ValidationSummary()
+        <button type="submit" class="btn btn-warning">Edit Category</button>
+
+        <a class="btn btn-danger" href="@Url.Action("CategoryManagement", "CategoriesManagement", new { area = "Admin" })">Cancel</a>
+    </div>
+    }
+
+
+</div>

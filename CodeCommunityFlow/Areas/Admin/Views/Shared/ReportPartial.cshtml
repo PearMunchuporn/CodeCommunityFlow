@@ -1,0 +1,28 @@
+﻿
+@model List<CodeCommunityFlow.ViewModels.ReportViewModel>
+
+
+<table class="table table-responsive mt-4">
+
+    <tr>
+        <td>No.</td>
+        <th>Report Reason</th>
+        <th>Score Effect</th>
+    </tr>
+
+
+    @{
+        int no = 1;
+    }
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@no</td>
+            <td>@item.ReportReason</td>
+            <td>@item.ScoreMinus</td>
+        </tr>
+        no++;
+    }
+
+
+</table>

@@ -1,0 +1,31 @@
+﻿@model CodeCommunityFlow.ViewModels.ReportViewModel
+@{
+    ViewBag.Title = "Add Report Reason";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+<h4 class="mt-3">Add Report Reason</h4>
+
+<div class="col-sm-6">
+
+    @using (Html.BeginForm("CreateReportReason", "ReportManagement", new { area = "Admin" }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+    <div class="form-group">
+
+        @Html.LabelFor(r => r.ReportReason)
+        @Html.TextBoxFor(r => r.ReportReason, new { @class = "form-control", required = "required" })
+        @Html.ValidationMessageFor(m => m.ReportReason)
+        @Html.LabelFor(r => r.ScoreMinus)
+        @Html.TextBoxFor(r => r.ScoreMinus, new { @class = "form-control", required = "required" })
+        @Html.ValidationMessageFor(m => m.ScoreMinus)
+        <br />
+        @Html.ValidationSummary()
+        <button type="submit" class="btn btn-primary">Add Report Reason</button>
+        <a class="btn btn-danger" href="@Url.Action("ReportManagement", "ReportManagement", new { area = "Admin" })">Cancel</a>
+    </div>
+    }
+
+
+</div>

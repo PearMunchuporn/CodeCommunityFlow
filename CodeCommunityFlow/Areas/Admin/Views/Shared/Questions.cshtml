@@ -1,0 +1,35 @@
+﻿@model CodeCommunityFlow.ViewModels.QuestionViewModel
+@{
+    ViewBag.Title = "Top 10 Questions";
+}
+
+
+<tr>
+
+    <td><span class="badge badge-customVoteCount">@Model.VotesCount </span>@(Model.VotesCount > 1 ? " Votes" : " Vote")</td>
+    <td><span class="badge badge-AnswersCount">@Model.AnswersCount </span>@(Model.AnswersCount > 1 ? " Answers" : " Answer")</td>
+    <td><span class="badge badge-ViewsCount">@Model.ViewsCount </span>@(Model.ViewsCount > 1 ? " Views" : " View")</td>
+
+
+
+    <td>
+        <a href="/Admin/ViewQuestionAndAnswer/ViewByAdmin/@Model.QuestionID">@Model.QuestionName</a> <br />
+
+        <span class="badge badge-category">@Model.Categories.CatagoryName</span>
+
+    </td>
+
+    <td>
+
+        <a href="/Admin/UserViewProfile/UserViewProfile/@Model.UserID"><p class="text-name">by @Model.Users.UserName</p></a>
+
+
+    </td>
+
+    <td>@Model.QuestionDateTime</td>
+
+
+
+</tr>
+
+

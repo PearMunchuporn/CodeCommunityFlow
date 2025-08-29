@@ -1,0 +1,76 @@
+﻿@model CodeCommunityFlow.ViewModels.HomeIndexViewModel
+@{
+    ViewBag.Title = "Admin Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminViewLayout.cshtml";
+}
+
+@if (TempData["SuccessDeleteQuestion"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessDeleteQuestion"]</div>
+}
+<br />
+<br />
+@if (Session["CurrentAdminName"] != null)
+{
+    <a href="/Admin/AdminAnnouncement/AddAnnouncement/" class="btn btn-primary">Add New Announcement</a>
+
+}
+
+@if (TempData["SuccessChangePassword"] != null)
+{
+    <div class="alert alert-success" id="successAlert">@TempData["SuccessChangePassword"]</div>
+}
+
+<h3 class="my-4">Announcement By Admin Team</h3>
+
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table">
+            @foreach (var announce in Model.AdminAnnouncements)
+            {
+
+                Html.RenderPartial("AnnouncementPartial", announce);
+            }
+        </table>
+    </div>
+</div>
+
+<h5 class="my-4">Top 10 Question</h5>
+
+
+
+
+<div class="row">
+
+
+    <div class="col-sm-12">
+
+        <table class="table">
+
+
+
+            @foreach (var questions in Model.Questions)
+            {
+
+                Html.RenderPartial("Questions", questions);
+            }
+
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+
+    setTimeout(function () {
+        var alert = document.getElementById("successAlert")
+        if (alert) {
+            alert.classList.remove("show")
+            alert.classList.add("fade")
+            alert.style.opacity = 0
+            setTimeout(() => alert.remove(), 500) // remove from DOM after fade
+        }
+    }, 3000); // 3000ms
+</script>
+
