@@ -43,8 +43,7 @@ namespace CodeCommunityFlow.Repository
         public IQueryable<AdminAnnouncement> GetAnnoucement()
         {
             return db.AdminAnnouncements;
-            /*  .Include(a => a.CommentFromAnnouncement); */// ชื่อ property ให้ถูกต้อง
-               // ถ้ามี navigation property นี้
+          
         }
 
         public AdminAnnouncement GetAnnouncementByID(int AnnouncementID)
