@@ -1,4 +1,4 @@
-﻿using CodeCommunityFlow.DomainModels;
+using CodeCommunityFlow.DomainModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace CodeCommunityFlow.Repository
         }
         public List<Questions> GetQuestions()
         {
-            var AllQuestions = db.Questions.ToList();
+            var AllQuestions = db.Questions.AsNoTracking().ToList();
             return AllQuestions;
         }
 
@@ -70,8 +70,7 @@ namespace CodeCommunityFlow.Repository
                 question.ViewsCount = questionUpdate.ViewsCount;
                 question.VotesCount = questionUpdate.VotesCount;
                 question.Description = questionUpdate.Description;
-               
-               // question.ReportID = questionUpdate.ReportID;
+              
                 db.SaveChanges();
             }
 
