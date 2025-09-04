@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,18 +7,18 @@ using CodeCommunityFlow.DomainModels;
 using System.Data.Entity;
 namespace CodeCommunityFlow.Repository
 {
-  public interface IAdminAnnouncementRepository
+    public interface IAdminAnnouncementRepository
     {
         void InsertAnnoumentByAdmin(AdminAnnouncement adminAnnouncement);
         void UpdateAnnoucement(AdminAnnouncement adminAnnouncementUpdated);
         AdminAnnouncement GetAnnouncementByID(int AnnouncementID);
         IQueryable<AdminAnnouncement> GetAnnoucement();
         void UpdateVoteAnnnouncement(int AnnounceId, int AdminId, int Value);
-        void UpdateCommentCount(int AnnounceId , int value);
+        void UpdateCommentCount(int AnnounceId, int value);
         void DeleteAnnouncement(int AnnoucementID);
         void UpdateAnnouncementViewCount(int AnnounceID, int value);
     }
-   public class AdminAnnouncementRepository: IAdminAnnouncementRepository
+    public class AdminAnnouncementRepository : IAdminAnnouncementRepository
     {
         CodeCommunityFlowDbContext db;
         VoteRepository VoteRepository;
@@ -29,13 +29,13 @@ namespace CodeCommunityFlow.Repository
 
         }
 
-       public void DeleteAnnouncement(int AnnoucementID)
+        public void DeleteAnnouncement(int AnnoucementID)
         {
             AdminAnnouncement adminAnnouncement = db.AdminAnnouncements.Where(a => a.AdminAnnouncementID == AnnoucementID).FirstOrDefault();
             if (adminAnnouncement != null)
             {
                 db.AdminAnnouncements.Remove(adminAnnouncement);
-         
+
                 db.SaveChanges();
             }
         }
@@ -43,19 +43,19 @@ namespace CodeCommunityFlow.Repository
         public IQueryable<AdminAnnouncement> GetAnnoucement()
         {
             return db.AdminAnnouncements;
-          
+
         }
 
         public AdminAnnouncement GetAnnouncementByID(int AnnouncementID)
         {
-            AdminAnnouncement adminAnnouncement = db.AdminAnnouncements.Where(a => a.AdminAnnouncementID == AnnouncementID).FirstOrDefault();
+            AdminAnnouncement adminAnnouncement = db.AdminAnnouncements.Where(a => a.AdminAnnouncementID == AnnouncementID).AsNoTracking().FirstOrDefault();
             return adminAnnouncement;
         }
 
         public void InsertAnnoumentByAdmin(AdminAnnouncement adminAnnouncement)
         {
             db.AdminAnnouncements.Add(adminAnnouncement);
-           
+
             db.SaveChanges();
         }
 
@@ -77,7 +77,7 @@ namespace CodeCommunityFlow.Repository
             }
         }
 
-        public void UpdateAnnouncementViewCount(int AnnounceID, int value )
+        public void UpdateAnnouncementViewCount(int AnnounceID, int value)
         {
             AdminAnnouncement announcement = db.AdminAnnouncements.Where(a => a.AdminAnnouncementID == AnnounceID).FirstOrDefault();
             if (announcement != null)
@@ -87,7 +87,7 @@ namespace CodeCommunityFlow.Repository
             }
         }
 
-        public void UpdateCommentCount(int AnnounceId , int value)
+        public void UpdateCommentCount(int AnnounceId, int value)
         {
             AdminAnnouncement announcement = db.AdminAnnouncements.Where(a => a.AdminAnnouncementID == AnnounceId).FirstOrDefault();
             if (announcement != null)
@@ -95,7 +95,7 @@ namespace CodeCommunityFlow.Repository
                 announcement.CommentCount += value;
                 db.SaveChanges();
 
-               
+
             }
         }
 
